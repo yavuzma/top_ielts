@@ -1,4 +1,5 @@
 import type { Level } from "@/data/content";
+import type { SrsCard } from "@/lib/srs";
 
 export interface EssayEntry {
   id: string;
@@ -19,7 +20,8 @@ export interface StudyState {
   level: Level;
   tasks: Record<string, boolean>;
   grammar: Record<string, boolean>;
-  vocab: Record<string, "known">;
+  vocab: Record<string, "known">; // legacy "I know it" marks (kept for back-compat)
+  srs: Record<string, SrsCard>; // spaced-repetition scheduling per word
   essays: Record<string, EssayEntry>;
   reading: Record<string, string>; // id -> son tarih (YYYY-MM-DD)
   listening: Record<string, string>;
@@ -36,6 +38,7 @@ export function emptyState(): StudyState {
     tasks: {},
     grammar: {},
     vocab: {},
+    srs: {},
     essays: {},
     reading: {},
     listening: {},
@@ -53,6 +56,7 @@ export function mergeStates(local: StudyState, remote: Partial<StudyState>): Stu
   out.tasks = { ...local.tasks };
   out.grammar = { ...local.grammar };
   out.vocab = { ...local.vocab };
+  out.srs = { ...local.srs };
   out.essays = { ...local.essays };
   out.reading = { ...local.reading };
   out.listening = { ...local.listening };
@@ -60,6 +64,12 @@ export function mergeStates(local: StudyState, remote: Partial<StudyState>): Stu
   for (const k in remote.tasks) if (remote.tasks[k]) out.tasks[k] = true;
   for (const k in remote.grammar) if (remote.grammar[k]) out.grammar[k] = true;
   for (const k in remote.vocab) out.vocab[k] = remote.vocab[k]!;
+  // SRS: the card reviewed most recently wins (latest `last` date)
+  for (const k in remote.srs) {
+    const r = remote.srs[k]!;
+    const l = out.srs[k];
+    if (!l || (r.last || "") >= (l.last || "")) out.srs[k] = r;
+  }
   for (const id in remote.essays) {
     const r = remote.essays[id]!;
     const l = local.essays[id];

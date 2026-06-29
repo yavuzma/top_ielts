@@ -17,6 +17,7 @@ import {
   type EssayEntry,
   type StudyState,
 } from "@/store/types";
+import { newCard, schedule, type Grade } from "@/lib/srs";
 
 const LS_PREFIX = "nb_state_";
 const todayStr = () => new Date().toISOString().slice(0, 10);
@@ -50,6 +51,7 @@ interface StudyActions {
   toggleTask: (id: string, v: boolean) => void;
   toggleGrammar: (id: string, v: boolean) => void;
   markVocabKnown: (key: string) => void;
+  reviewVocab: (key: string, grade: Grade) => void;
   addEssay: (e: Omit<EssayEntry, "id">) => void;
   deleteEssay: (id: string) => void;
   markReading: (id: string) => void;
@@ -177,6 +179,12 @@ export function StudyProvider({ children }: { children: ReactNode }) {
       commit((s) => ({
         ...s,
         vocab: { ...s.vocab, [key]: "known" },
+        streak: bump(s.streak),
+      })),
+    reviewVocab: (key, grade) =>
+      commit((s) => ({
+        ...s,
+        srs: { ...s.srs, [key]: schedule(s.srs[key] ?? newCard(), grade) },
         streak: bump(s.streak),
       })),
     addEssay: (e) =>

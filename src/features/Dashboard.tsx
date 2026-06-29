@@ -1,6 +1,7 @@
-import { BookOpen, Flame, Headphones, PenLine, Target } from "lucide-react";
+import { BookOpen, Brain, Flame, Headphones, PenLine, Target } from "lucide-react";
 import { BANDS, LEVELS, ROUTINES } from "@/data/content";
 import { useStudy, todayStr } from "@/store/store";
+import { computeStats } from "@/lib/vocabStats";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { Input } from "@/components/ui/input";
@@ -9,6 +10,7 @@ import { Badge } from "@/components/ui/badge";
 export default function Dashboard() {
   const { state, setBand } = useStudy();
   const lvl = LEVELS[state.level];
+  const vocab = computeStats(state);
 
   let total = 0;
   let done = 0;
@@ -30,6 +32,30 @@ export default function Dashboard() {
 
   return (
     <div className="space-y-5">
+      {vocab.dueCount > 0 && (
+        <a
+          href="#"
+          onClick={(e) => {
+            e.preventDefault();
+            document.querySelector<HTMLButtonElement>('[data-tab="vocab"]')?.click();
+          }}
+          className="flex items-center gap-3 rounded-xl border border-primary/30 bg-gradient-to-r from-primary/10 to-success/10 p-4 transition-colors hover:from-primary/15 hover:to-success/15"
+        >
+          <div className="grid size-10 shrink-0 place-items-center rounded-full bg-primary/15 text-primary">
+            <Brain className="size-5" />
+          </div>
+          <div className="min-w-0">
+            <div className="font-semibold">
+              {vocab.dueCount} {vocab.dueCount === 1 ? "word" : "words"} ready to review
+            </div>
+            <p className="text-xs text-muted-foreground">
+              Review them now to lock them into long-term memory before you forget.
+            </p>
+          </div>
+          <span className="ml-auto text-sm font-semibold text-primary">Review →</span>
+        </a>
+      )}
+
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <Card>
           <CardHeader className="pb-2">

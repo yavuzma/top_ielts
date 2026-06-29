@@ -107,9 +107,30 @@
   }
 }
 
-/* Arka plan ışıltısı (commercial feel) */
+/* Arka plan ışıltısı (commercial feel) — yavaşça nefes alır */
 .app-aurora {
   background:
-    radial-gradient(60rem 60rem at 15% -10%, color-mix(in oklch, var(--primary) 18%, transparent), transparent 60%),
-    radial-gradient(50rem 50rem at 110% 10%, color-mix(in oklch, var(--success) 12%, transparent), transparent 55%);
+    radial-gradient(55rem 55rem at 12% -12%, color-mix(in oklch, var(--primary) 22%, transparent), transparent 60%),
+    radial-gradient(48rem 48rem at 112% 8%, color-mix(in oklch, var(--success) 16%, transparent), transparent 55%),
+    radial-gradient(40rem 40rem at 60% 120%, color-mix(in oklch, var(--accent) 30%, transparent), transparent 60%);
+  animation: aurora-drift 22s ease-in-out infinite alternate;
+}
+@keyframes aurora-drift {
+  from { transform: translate3d(0, 0, 0) scale(1); opacity: 0.85; }
+  to { transform: translate3d(0, -2%, 0) scale(1.06); opacity: 1; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .app-aurora { animation: none; }
+}
+
+/* Kartlara ince derinlik + hover kalkışı */
+[data-slot="card"] {
+  transition: box-shadow 0.25s ease, transform 0.25s ease, border-color 0.25s ease;
+  box-shadow: 0 1px 2px oklch(0 0 0 / 0.04), 0 8px 24px -16px oklch(0 0 0 / 0.18);
+}
+
+/* İnce kaydırma çubuğu */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: color-mix(in oklch, var(--foreground) 22%, transparent) transparent;
 }

@@ -46,14 +46,15 @@ const TABS = [
 function Shell({ onSignIn }: { onSignIn: () => void }) {
   const { theme, toggle } = useTheme();
   return (
-    <div className="min-h-screen">
+    <div className="relative min-h-screen">
+      <div className="app-aurora pointer-events-none fixed inset-0 -z-10" />
       <Header theme={theme} onToggleTheme={toggle} />
       <main className="mx-auto max-w-5xl px-4 py-6">
         <Tabs defaultValue="dashboard">
           <div className="-mx-4 overflow-x-auto px-4 pb-1">
             <TabsList className="w-max">
               {TABS.map((t) => (
-                <TabsTrigger key={t.v} value={t.v}>
+                <TabsTrigger key={t.v} value={t.v} data-tab={t.v}>
                   <t.icon className="size-4" />
                   <span className="hidden sm:inline">{t.label}</span>
                 </TabsTrigger>

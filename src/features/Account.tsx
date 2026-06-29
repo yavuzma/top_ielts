@@ -1,10 +1,11 @@
-import { CalendarDays, Cloud, CloudOff, Trash2 } from "lucide-react";
+import { CalendarDays, Cloud, CloudOff, Sparkles, Trash2 } from "lucide-react";
 import { useAuth } from "@/store/auth";
 import { useStudy } from "@/store/store";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import ApiKeyForm from "@/components/ApiKeyForm";
 
 export default function Account({ onSignIn }: { onSignIn: () => void }) {
   const { user, enabled, logout } = useAuth();
@@ -43,6 +44,20 @@ export default function Account({ onSignIn }: { onSignIn: () => void }) {
               Cloud sync isn't configured (Firebase) — guest mode. Setup steps are in the README.
             </p>
           )}
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <Sparkles className="size-5 text-primary" /> AI speaking coach
+          </CardTitle>
+          <p className="text-sm text-muted-foreground">
+            Connect your OpenAI API key to unlock live speaking practice with Iris, your AI examiner.
+          </p>
+        </CardHeader>
+        <CardContent>
+          <ApiKeyForm />
         </CardContent>
       </Card>
 
