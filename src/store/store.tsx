@@ -84,7 +84,7 @@ export function StudyProvider({ children }: { children: ReactNode }) {
       if (pushTimer.current) clearTimeout(pushTimer.current);
       pushTimer.current = setTimeout(() => {
         lastPushed.current = s.updatedAt;
-        setDoc(doc(db!, "users", user.uid), s as Record<string, unknown>).catch((e) =>
+        setDoc(doc(db!, "users", user.uid), s as unknown as Record<string, unknown>).catch((e) =>
           console.warn("Senkron yazma hatası:", e),
         );
       }, 700);

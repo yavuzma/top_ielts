@@ -10,4 +10,8 @@ export default defineConfig({
   resolve: {
     alias: { "@": path.resolve(__dirname, "./src") },
   },
+  build: {
+    // Firebase SDK doğası gereği büyük; uyarı eşiğini yükseltiyoruz.
+    chunkSizeWarningLimit: 1200,
+  },
 });
