@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#0f1220">
+<title>IELTS 9/9 — B1 · B2 · C1</title>
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icon.svg">
+<link rel="apple-touch-icon" href="icon.svg">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<header>
+  <div class="brand">
+    <h1>IELTS <span class="accent">9/9</span></h1>
+    <p class="sub">B1 → B2 → C1 · her gün bir essay · her cihazdan</p>
+  </div>
+  <div class="countdown" id="countdown"></div>
+</header>
+
+<div class="level-bar">
+  <span class="lvl-label">Seviye:</span>
+  <button class="lvl-btn" data-lvl="B1">B1 · Kelime & Grammar</button>
+  <button class="lvl-btn" data-lvl="B2">B2 · IELTS</button>
+  <button class="lvl-btn" data-lvl="C1">C1 · IELTS 8+</button>
+</div>
+
+<nav id="tabs">
+  <button class="tab active" data-tab="dashboard">📊 Panel</button>
+  <button class="tab" data-tab="plan">🗺️ Seviye Planı</button>
+  <button class="tab" data-tab="grammar">📐 Grammar</button>
+  <button class="tab" data-tab="vocab">🧠 Kelime</button>
+  <button class="tab" data-tab="reading">📖 Okuma</button>
+  <button class="tab" data-tab="listening">🎧 Dinleme</button>
+  <button class="tab" data-tab="essay">✍️ Yazma (Essay)</button>
+  <button class="tab" data-tab="skills">🗣️ Speaking</button>
+  <button class="tab" data-tab="resources">📚 Kaynaklar</button>
+  <button class="tab" data-tab="sync">☁️ Senkron</button>
+</nav>
+
+<main>
+  <!-- DASHBOARD -->
+  <section id="dashboard" class="panel active">
+    <div class="grid">
+      <div class="card stat">
+        <h3>Seviye İlerlemesi</h3>
+        <div class="progress-ring"><span id="overallPct">0%</span></div>
+        <div class="bar"><div id="overallBar" class="bar-fill"></div></div>
+        <small id="overallText">0 / 0 görev</small>
+      </div>
+      <div class="card stat">
+        <h3>Bulunduğun Seviye</h3>
+        <p class="big" id="todayWeek">B1</p>
+        <p id="todayFocus">Hadi başlayalım!</p>
+      </div>
+      <div class="card stat">
+        <h3>Çalışma Serisi 🔥</h3>
+        <p class="big" id="streak">0 gün</p>
+        <small>Her gün en az 1 görev/kelime/essay</small>
+      </div>
+      <div class="card stat">
+        <h3>Essay Serisi ✍️</h3>
+        <p class="big" id="essayStreak">0 gün</p>
+        <small id="essayCount">0 essay</small>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>Band Hedefleri (kendi tahminin)</h3>
+      <p class="hint">Deneme yaptıkça güncelle. 9/9 hedefi için her beceride 8.5+ gerekir.</p>
+      <div class="bands" id="bands"></div>
+    </div>
+
+    <div class="card">
+      <h3>Bugünün pratiği</h3>
+      <p class="hint">Her gün üçünü de yap: oku, dinle, yaz. Tamamladıkça yeşillenir.</p>
+      <div class="pills" id="todayPractice"></div>
+    </div>
+
+    <div class="card">
+      <h3>Bugün ne yapmalıyım? <small>(seviyene göre)</small></h3>
+      <ul class="todo" id="dailyRoutine"></ul>
+    </div>
+  </section>
+
+  <!-- PLAN -->
+  <section id="plan" class="panel">
+    <div class="card">
+      <h3 id="levelTitle">—</h3>
+      <p class="hint" id="levelDesc"></p>
+    </div>
+    <p class="hint">Her görevi tamamladıkça kutucuğu işaretle. İlerlemen otomatik kaydolur ve senkronlanır.</p>
+    <div id="planContainer"></div>
+  </section>
+
+  <!-- GRAMMAR -->
+  <section id="grammar" class="panel">
+    <div class="card">
+      <h3>📐 Grammar dersleri <span id="grammarProgress" class="muted"></span></h3>
+      <p class="hint">Seçili seviyene (ve altına) ait konular gösterilir. B1'de en yoğun. Konuyu okuyup örnek üret, sonra "öğrendim" işaretle.</p>
+    </div>
+    <div id="grammarContainer"></div>
+  </section>
+
+  <!-- VOCAB -->
+  <section id="vocab" class="panel">
+    <div class="card vocab-card">
+      <div class="vocab-top">
+        <span id="vocabProgress">0 / 0</span>
+        <select id="vocabList"></select>
+      </div>
+      <div class="flashcard" id="flashcard">
+        <div class="fc-front" id="fcWord">Başlamak için tıkla</div>
+        <div class="fc-back hidden" id="fcBack"></div>
+      </div>
+      <div class="vocab-controls">
+        <button id="vocabAgain" class="btn ghost">😵 Tekrar</button>
+        <button id="vocabFlip" class="btn">🔄 Çevir</button>
+        <button id="vocabKnow" class="btn good">✅ Biliyorum</button>
+      </div>
+      <small class="hint">"Biliyorum" dediklerin listeden çıkar, "Tekrar" dediklerin geri gelir.</small>
+    </div>
+  </section>
+
+  <!-- READING -->
+  <section id="reading" class="panel">
+    <div class="card">
+      <h3>📖 Okuma <span id="readingProgress" class="muted"></span></h3>
+      <p class="hint">Seçili seviyenin metinleri. Metni oku, soruları yanıtla, sonra cevap anahtarıyla kontrol et. "Bugün okudum" deyince seriye sayılır. (İçeriği <b>data.js → READING</b>'den çoğaltabilirsin.)</p>
+    </div>
+    <div id="readingContainer"></div>
+  </section>
+
+  <!-- LISTENING -->
+  <section id="listening" class="panel">
+    <div class="card">
+      <h3>🎧 Dinleme <span id="listeningProgress" class="muted"></span></h3>
+      <p class="hint">Seçili seviyene uygun, ücretsiz gerçek kaynaklara yönlendiren görevler. Önce/sırasında/sonra adımlarını izle.</p>
+    </div>
+    <div id="listeningContainer"></div>
+  </section>
+
+  <!-- ESSAY -->
+  <section id="essay" class="panel">
+    <div class="card">
+      <h3>✍️ Günün Essay'i</h3>
+      <div class="essay-prompt">
+        <span class="essay-type" id="essayType"></span>
+        <p class="essay-q" id="essayQ"></p>
+        <button class="btn ghost small" id="essayNew">🎲 Başka soru</button>
+      </div>
+      <textarea id="essayText" placeholder="Essay'ini buraya yaz... (Task 2 için en az 250 kelime hedefle)"></textarea>
+      <div class="essay-foot">
+        <span class="muted" id="essayWords">0 kelime</span>
+        <div>
+          <button class="btn" id="essayClaude">🤖 Claude'a puanlat (kopyala)</button>
+          <button class="btn good" id="essaySave">💾 Kaydet</button>
+        </div>
+      </div>
+      <small class="hint">Kaydet → essay geçmişine ekler ve seriyi artırır. "Claude'a puanlat" → essay'ini band değerlendirme istemiyle panoya kopyalar, sohbete yapıştır.</small>
+    </div>
+    <div class="card">
+      <h3>📓 Essay Geçmişi</h3>
+      <div id="essayList"></div>
+    </div>
+  </section>
+
+  <!-- SKILLS -->
+  <section id="skills" class="panel">
+    <div class="card">
+      <h3>🗣️ Speaking — Benimle Pratik</h3>
+      <p>Konuşma pratiğini doğrudan Claude ile yap:</p>
+      <div class="prompt-box">
+        <code>"IELTS Speaking Part 2 yapalım. Bana bir cue card ver, 1 dk hazırlanayım, sonra cevabımı yazıyla vereceğim. Band puanı + düzeltme yap."</code>
+        <button class="copy" data-copy="IELTS Speaking Part 2 yapalim. Bana bir cue card ver, 1 dk hazirlanayim, sonra cevabimi yaziyla verecegim. Band puani + duzeltme yap.">Kopyala</button>
+      </div>
+      <ul class="steps">
+        <li>Part 1: günlük konular — kısa net cevaplar</li>
+        <li>Part 2: 2 dk monolog (cue card) — giriş → detay → kişisel bağ → sonuç</li>
+        <li>Part 3: soyut tartışma — fikrini gerekçelendir</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3>✍️ Writing — ipucu</h3>
+      <p class="hint">Günlük yazını "Günlük Essay" sekmesinden yap; orada hem kaydedilir hem de tek tuşla Claude'a puanlatabilirsin.</p>
+    </div>
+  </section>
+
+  <!-- RESOURCES -->
+  <section id="resources" class="panel">
+    <p class="hint">Hepsi ücretsiz ve yasal.</p>
+    <div id="resourceContainer"></div>
+  </section>
+
+  <!-- SYNC -->
+  <section id="sync" class="panel">
+    <div class="card">
+      <h3>☁️ Cihazlar arası senkron</h3>
+      <p id="syncStatus" class="sync off">⚪ Yerel mod</p>
+      <p class="hint">Aynı <b>senkron kodunu</b> telefon, tablet ve bilgisayarda gir — ilerlemen üçünde de aynı olur. Kodu kimseyle paylaşma (şifren gibidir).</p>
+      <div class="sync-row">
+        <input id="syncCodeInput" placeholder="örn: ali-ielts-2026">
+        <button class="btn" id="syncSave">Kaydet / Bağlan</button>
+        <button class="btn ghost" id="syncGen">🎲 Kod üret</button>
+      </div>
+      <p class="hint" style="margin-top:14px">Senkronu açmak için önce <b>firebase-config.js</b> dosyasına Firebase bilgilerini girmelisin. Nasıl yapılacağı <b>README.md</b> dosyasında adım adım anlatılıyor.</p>
+    </div>
+    <div class="card">
+      <h3>🗓️ Sınav tarihi</h3>
+      <p class="hint">Geri sayım için sınav tarihini gir.</p>
+      <input type="date" id="examInput">
+    </div>
+  </section>
+</main>
+
+<footer>
+  <button id="resetBtn" class="btn ghost small">Bu cihazı sıfırla</button>
+  <span>Senkron açıksa verin bulutta; kapalıysa yalnızca bu cihazda saklanır.</span>
+</footer>
+
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+<script src="firebase-config.js"></script>
+<script src="data.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
