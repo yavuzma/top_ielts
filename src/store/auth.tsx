@@ -39,17 +39,17 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const signUp: AuthValue["signUp"] = async (name, email, password) => {
-    if (!auth) throw new Error("Auth devre dışı");
+    if (!auth) throw new Error("Auth disabled");
     const cred = await createUserWithEmailAndPassword(auth, email, password);
     if (name) await updateProfile(cred.user, { displayName: name });
     setUser({ ...cred.user });
   };
   const signIn: AuthValue["signIn"] = async (email, password) => {
-    if (!auth) throw new Error("Auth devre dışı");
+    if (!auth) throw new Error("Auth disabled");
     await signInWithEmailAndPassword(auth, email, password);
   };
   const signInWithGoogle: AuthValue["signInWithGoogle"] = async () => {
-    if (!auth) throw new Error("Auth devre dışı");
+    if (!auth) throw new Error("Auth disabled");
     await signInWithPopup(auth, new GoogleAuthProvider());
   };
   const logout: AuthValue["logout"] = async () => {

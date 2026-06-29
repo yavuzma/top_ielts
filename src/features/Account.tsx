@@ -16,31 +16,31 @@ export default function Account({ onSignIn }: { onSignIn: () => void }) {
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             {user ? <Cloud className="size-5 text-success" /> : <CloudOff className="size-5 text-warning" />}
-            Hesap & senkron
+            Account & sync
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-3">
           {user ? (
             <>
               <p className="text-sm">
-                <b>{user.displayName || user.email}</b> olarak giriş yaptın. İlerlemen tüm
-                cihazlarında otomatik senkronlanıyor.
+                Signed in as <b>{user.displayName || user.email}</b>. Your progress syncs
+                automatically across all your devices.
               </p>
               <Button variant="outline" onClick={() => void logout()}>
-                Çıkış yap
+                Sign out
               </Button>
             </>
           ) : enabled ? (
             <>
               <p className="text-sm text-muted-foreground">
-                Şu an misafir modundasın — ilerlemen yalnızca bu cihazda. Hesap açarsan telefon,
-                tablet ve bilgisayarda aynı veriyi görürsün. (Misafir ilerlemen hesabına taşınır.)
+                You're in guest mode — your progress is only on this device. Create an account to see
+                the same data on your phone, tablet and computer. (Your guest progress is carried over.)
               </p>
-              <Button onClick={onSignIn}>Giriş yap / Kayıt ol</Button>
+              <Button onClick={onSignIn}>Sign in / Sign up</Button>
             </>
           ) : (
             <p className="text-sm text-muted-foreground">
-              Bulut senkron için Firebase ayarlanmamış (misafir modu). Kurulum adımları README'de.
+              Cloud sync isn't configured (Firebase) — guest mode. Setup steps are in the README.
             </p>
           )}
         </CardContent>
@@ -49,11 +49,11 @@ export default function Account({ onSignIn }: { onSignIn: () => void }) {
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <CalendarDays className="size-5" /> Sınav tarihi
+            <CalendarDays className="size-5" /> Exam date
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-2">
-          <Label htmlFor="exam">Geri sayım için tarih gir</Label>
+          <Label htmlFor="exam">Set a date for the countdown</Label>
           <Input
             id="exam"
             type="date"
@@ -67,20 +67,20 @@ export default function Account({ onSignIn }: { onSignIn: () => void }) {
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2 text-destructive">
-            <Trash2 className="size-5" /> İlerlemeyi sıfırla
+            <Trash2 className="size-5" /> Reset progress
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-2">
           <p className="text-sm text-muted-foreground">
-            Bu hesabın/cihazın ilerlemesini siler. Geri alınamaz.
+            Deletes the progress for this account/device. This cannot be undone.
           </p>
           <Button
             variant="destructive"
             onClick={() => {
-              if (confirm("Tüm ilerlemen silinecek. Emin misin?")) resetLocal();
+              if (confirm("All your progress will be deleted. Are you sure?")) resetLocal();
             }}
           >
-            Sıfırla
+            Reset
           </Button>
         </CardContent>
       </Card>

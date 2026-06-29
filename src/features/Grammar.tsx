@@ -14,9 +14,9 @@ export default function Grammar() {
       <Card>
         <CardContent className="flex items-center justify-between py-4">
           <div>
-            <h2 className="font-semibold">Grammar dersleri</h2>
+            <h2 className="font-semibold">Grammar lessons</h2>
             <p className="text-sm text-muted-foreground">
-              Seçili seviyene ({state.level}) ve altına ait konular. Oku, örnek üret, "öğrendim" işaretle.
+              Topics for your level ({state.level}) and below. Read, generate examples, then mark "learned".
             </p>
           </div>
           <Badge variant="secondary">{doneN} / {items.length}</Badge>
@@ -45,7 +45,7 @@ export default function Grammar() {
                   ))}
                 </ul>
                 <div className="rounded-lg border bg-secondary/40 p-3">
-                  <div className="mb-1 text-sm font-semibold">Örnekler</div>
+                  <div className="mb-1 text-sm font-semibold">Examples</div>
                   <ul className="list-disc space-y-1 pl-5 text-sm text-muted-foreground">
                     {g.examples.map((e, i) => (
                       <li key={i}>{e}</li>
@@ -63,7 +63,7 @@ export default function Grammar() {
                     onChange={(e) => toggleGrammar(g.id, e.target.checked)}
                     className="size-5 accent-[var(--success)]"
                   />
-                  Bu konuyu öğrendim
+                  I've learned this topic
                 </label>
               </CardContent>
             </details>

@@ -1,6 +1,6 @@
 export const BRAND = {
   name: "NineBands",
-  tagline: "B1'den C1'e, IELTS 9 yolculuğun",
+  tagline: "Your journey from B1 to IELTS 9",
   pitch:
-    "Seviyene göre kelime ve dilbilgisinden, her gün okuma–dinleme–yazma pratiğine kadar tek yerde. Akıllı tekrar, ilerleme takibi ve her cihazda bulut senkron.",
+    "Everything in one place: from level-based vocabulary and grammar to daily reading, listening and writing practice. Smart review, progress tracking, and cloud sync on every device.",
 } as const;

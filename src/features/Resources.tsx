@@ -5,7 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 export default function Resources() {
   return (
     <div className="space-y-4">
-      <p className="text-sm text-muted-foreground">Hepsi ücretsiz ve yasal kaynaklar.</p>
+      <p className="text-sm text-muted-foreground">All free, legitimate resources.</p>
       {RESOURCES.map((g) => (
         <Card key={g.group}>
           <CardHeader className="pb-2">

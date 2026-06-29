@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 
 export default function CopyButton({
   text,
-  label = "Kopyala",
+  label = "Copy",
   className,
   variant = "outline",
   size = "sm",
@@ -33,7 +33,7 @@ export default function CopyButton({
       }}
     >
       {done ? <Check className="size-4" /> : <Copy className="size-4" />}
-      {done ? "Kopyalandı" : label}
+      {done ? "Copied" : label}
     </Button>
   );
 }

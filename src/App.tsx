@@ -31,16 +31,16 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 const GUEST_KEY = "nb_guest";
 
 const TABS = [
-  { v: "dashboard", label: "Panel", icon: LayoutDashboard },
+  { v: "dashboard", label: "Dashboard", icon: LayoutDashboard },
   { v: "plan", label: "Plan", icon: Map },
   { v: "grammar", label: "Grammar", icon: Ruler },
-  { v: "vocab", label: "Kelime", icon: Brain },
-  { v: "reading", label: "Okuma", icon: BookOpen },
-  { v: "listening", label: "Dinleme", icon: Headphones },
-  { v: "essay", label: "Yazma", icon: PenLine },
-  { v: "speaking", label: "Konuşma", icon: MessageSquare },
-  { v: "resources", label: "Kaynaklar", icon: Library },
-  { v: "account", label: "Hesap", icon: UserCog },
+  { v: "vocab", label: "Vocabulary", icon: Brain },
+  { v: "reading", label: "Reading", icon: BookOpen },
+  { v: "listening", label: "Listening", icon: Headphones },
+  { v: "essay", label: "Writing", icon: PenLine },
+  { v: "speaking", label: "Speaking", icon: MessageSquare },
+  { v: "resources", label: "Resources", icon: Library },
+  { v: "account", label: "Account", icon: UserCog },
 ] as const;
 
 function Shell({ onSignIn }: { onSignIn: () => void }) {
@@ -74,7 +74,7 @@ function Shell({ onSignIn }: { onSignIn: () => void }) {
         </Tabs>
       </main>
       <footer className="border-t py-6 text-center text-xs text-muted-foreground">
-        NineBands · ilerlemen güvende. Hedef 9/9 💪
+        NineBands · your progress is safe. Aim for 9/9 💪
       </footer>
     </div>
   );

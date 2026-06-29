@@ -15,19 +15,19 @@ export default function Reading() {
       <Card>
         <CardContent className="flex items-center justify-between py-4">
           <div>
-            <h2 className="font-semibold">Okuma — {state.level}</h2>
+            <h2 className="font-semibold">Reading — {state.level}</h2>
             <p className="text-sm text-muted-foreground">
-              Metni oku, soruları yanıtla, cevap anahtarıyla kontrol et.
+              Read the text, answer the questions, then check with the answer key.
             </p>
           </div>
-          <Badge variant="secondary">{doneN} / {items.length} okundu</Badge>
+          <Badge variant="secondary">{doneN} / {items.length} read</Badge>
         </CardContent>
       </Card>
 
       {items.map((r) => {
         const last = state.reading[r.id];
         const doneToday = last === todayStr();
-        const prompt = `IELTS examiner gibi davran. "${r.title}" metninin sorularına verdiğim cevapları kontrol et, doğru/yanlışı açıkla ve eksiklerimi tamamla.\n\nCevaplarım:\n`;
+        const prompt = `Act as an IELTS examiner. Check my answers to the questions for the passage "${r.title}", explain what is right or wrong, and complete what I missed.\n\nMy answers:\n`;
         return (
           <Card key={r.id}>
             <details>
@@ -38,7 +38,7 @@ export default function Reading() {
                     <Badge variant="outline">{r.level}</Badge>
                   </div>
                   <p className="mt-0.5 text-sm text-muted-foreground">
-                    {r.topic} · ~{r.words} kelime{last ? ` · son: ${last}` : ""}
+                    {r.topic} · ~{r.words} words{last ? ` · last: ${last}` : ""}
                   </p>
                 </div>
                 {last && <Badge variant="success">✓</Badge>}
@@ -51,7 +51,7 @@ export default function Reading() {
                 </div>
 
                 <div>
-                  <h3 className="mb-1 font-semibold">Sorular</h3>
+                  <h3 className="mb-1 font-semibold">Questions</h3>
                   <ol className="list-decimal space-y-1.5 pl-5 text-sm">
                     {r.questions.map((q, i) => (
                       <li key={i}>{q.q}</li>
@@ -61,7 +61,7 @@ export default function Reading() {
 
                 <details className="rounded-lg border bg-secondary/30 p-3">
                   <summary className="cursor-pointer text-sm font-medium text-primary">
-                    Cevap anahtarını göster
+                    Show answer key
                   </summary>
                   <ol className="mt-2 list-decimal space-y-1 pl-5 text-sm text-success">
                     {r.questions.map((q, i) => (
@@ -71,13 +71,13 @@ export default function Reading() {
                 </details>
 
                 <div className="flex flex-wrap items-center justify-between gap-2">
-                  <CopyButton text={prompt} label="Cevaplarımı Claude'a kontrol ettir" />
+                  <CopyButton text={prompt} label="Check my answers with Claude" />
                   <Button
                     variant="success"
                     disabled={doneToday}
                     onClick={() => markReading(r.id)}
                   >
-                    {doneToday ? "Bugün okundu ✓" : "Bugün okudum ✓"}
+                    {doneToday ? "Read today ✓" : "Mark as read today ✓"}
                   </Button>
                 </div>
               </CardContent>

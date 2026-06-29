@@ -54,7 +54,7 @@ export default function Vocab() {
           </SelectContent>
         </Select>
         <span className="text-sm text-muted-foreground">
-          {known} / {all.length} öğrenildi
+          {known} / {all.length} learned
         </span>
       </div>
 
@@ -64,13 +64,13 @@ export default function Vocab() {
       >
         {!card ? (
           <div>
-            <div className="text-2xl font-bold">🎉 Bu liste bitti!</div>
-            <p className="mt-2 text-sm text-muted-foreground">Başka bir liste seç.</p>
+            <div className="text-2xl font-bold">🎉 List complete!</div>
+            <p className="mt-2 text-sm text-muted-foreground">Pick another list.</p>
           </div>
         ) : !flipped ? (
           <div>
             <div className="text-3xl font-bold text-primary">{card.w}</div>
-            <p className="mt-3 text-xs text-muted-foreground">Çevirmek için tıkla</p>
+            <p className="mt-3 text-xs text-muted-foreground">Tap to flip</p>
           </div>
         ) : (
           <div>
@@ -89,21 +89,21 @@ export default function Vocab() {
             setFlipped(false);
           }}
         >
-          <RotateCcw className="size-4" /> Tekrar
+          <RotateCcw className="size-4" /> Again
         </Button>
         <Button variant="secondary" disabled={!card} onClick={() => setFlipped((f) => !f)}>
-          <Repeat className="size-4" /> Çevir
+          <Repeat className="size-4" /> Flip
         </Button>
         <Button
           variant="success"
           disabled={!card}
           onClick={() => card && markVocabKnown(`${list}::${card.w}`)}
         >
-          <Check className="size-4" /> Biliyorum
+          <Check className="size-4" /> I know it
         </Button>
       </div>
       <p className="text-center text-xs text-muted-foreground">
-        "Biliyorum" dediklerin listeden çıkar; ilerlemen tüm cihazlarında senkronlanır.
+        Words you mark as known leave the list; your progress syncs across all your devices.
       </p>
     </div>
   );

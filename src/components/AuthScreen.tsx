@@ -9,12 +9,12 @@ import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 const FEATURES = [
-  { icon: Brain, title: "Seviyeli içerik", desc: "B1 kelime & grammar, B2–C1 tam IELTS" },
-  { icon: BookOpen, title: "Günlük okuma", desc: "Cevap anahtarlı, seviyeye göre metinler" },
-  { icon: Headphones, title: "Günlük dinleme", desc: "Yapılandırılmış, ücretsiz kaynaklar" },
-  { icon: PenLine, title: "Günlük essay", desc: "Yaz, kaydet, anında geri bildirim al" },
-  { icon: Cloud, title: "Her cihazda senkron", desc: "Telefon, tablet, bilgisayar tek hesap" },
-  { icon: Sparkles, title: "İlerleme & seri", desc: "Streak, band takibi, modül planı" },
+  { icon: Brain, title: "Levelled content", desc: "B1 vocab & grammar, B2–C1 full IELTS" },
+  { icon: BookOpen, title: "Daily reading", desc: "Texts by level with answer keys" },
+  { icon: Headphones, title: "Daily listening", desc: "Structured tasks, free sources" },
+  { icon: PenLine, title: "Daily essay", desc: "Write, save, get instant feedback" },
+  { icon: Cloud, title: "Sync everywhere", desc: "Phone, tablet, computer — one account" },
+  { icon: Sparkles, title: "Progress & streaks", desc: "Streaks, band tracking, module plan" },
 ];
 
 export default function AuthScreen({ onGuest }: { onGuest: () => void }) {
@@ -61,9 +61,7 @@ export default function AuthScreen({ onGuest }: { onGuest: () => void }) {
             <span className="text-lg font-black text-primary">9</span>
             <span className="font-semibold">{BRAND.name}</span>
           </div>
-          <h1 className="text-4xl font-extrabold tracking-tight sm:text-5xl">
-            {BRAND.tagline}
-          </h1>
+          <h1 className="text-4xl font-extrabold tracking-tight sm:text-5xl">{BRAND.tagline}</h1>
           <p className="mt-4 max-w-xl text-lg text-muted-foreground">{BRAND.pitch}</p>
 
           <div className="mt-8 grid grid-cols-2 gap-3 sm:grid-cols-3">
@@ -84,48 +82,48 @@ export default function AuthScreen({ onGuest }: { onGuest: () => void }) {
               <>
                 <Tabs value={mode} onValueChange={(v) => setMode(v as "in" | "up")}>
                   <TabsList className="grid w-full grid-cols-2">
-                    <TabsTrigger value="in">Giriş yap</TabsTrigger>
-                    <TabsTrigger value="up">Kayıt ol</TabsTrigger>
+                    <TabsTrigger value="in">Sign in</TabsTrigger>
+                    <TabsTrigger value="up">Sign up</TabsTrigger>
                   </TabsList>
 
                   <form onSubmit={submit} className="mt-5 space-y-4">
                     <TabsContent value="up" className="mt-0 space-y-2">
-                      <Label htmlFor="name">İsim</Label>
-                      <Input id="name" value={name} onChange={(e) => setName(e.target.value)} placeholder="Adın" />
+                      <Label htmlFor="name">Name</Label>
+                      <Input id="name" value={name} onChange={(e) => setName(e.target.value)} placeholder="Your name" />
                     </TabsContent>
                     <div className="space-y-2">
-                      <Label htmlFor="email">E-posta</Label>
-                      <Input id="email" type="email" required value={email} onChange={(e) => setEmail(e.target.value)} placeholder="ornek@mail.com" />
+                      <Label htmlFor="email">Email</Label>
+                      <Input id="email" type="email" required value={email} onChange={(e) => setEmail(e.target.value)} placeholder="you@example.com" />
                     </div>
                     <div className="space-y-2">
-                      <Label htmlFor="pw">Şifre</Label>
+                      <Label htmlFor="pw">Password</Label>
                       <Input id="pw" type="password" required minLength={6} value={password} onChange={(e) => setPassword(e.target.value)} placeholder="••••••" />
                     </div>
                     {err && <p className="text-sm text-destructive">{err}</p>}
                     <Button type="submit" className="w-full" disabled={busy}>
-                      {busy ? "Bekle…" : mode === "up" ? "Hesap oluştur" : "Giriş yap"}
+                      {busy ? "Please wait…" : mode === "up" ? "Create account" : "Sign in"}
                     </Button>
                   </form>
                 </Tabs>
 
                 <div className="my-4 flex items-center gap-3 text-xs text-muted-foreground">
-                  <span className="h-px flex-1 bg-border" /> veya <span className="h-px flex-1 bg-border" />
+                  <span className="h-px flex-1 bg-border" /> or <span className="h-px flex-1 bg-border" />
                 </div>
                 <Button variant="outline" className="w-full" onClick={google} disabled={busy}>
-                  Google ile devam et
+                  Continue with Google
                 </Button>
                 <button onClick={onGuest} className="mt-4 w-full text-center text-sm text-muted-foreground hover:text-foreground">
-                  Hesapsız dene (yalnızca bu cihaz)
+                  Try without an account (this device only)
                 </button>
               </>
             ) : (
               <div className="space-y-4 py-4 text-center">
                 <p className="text-sm text-muted-foreground">
-                  Bulut hesapları için Firebase henüz ayarlanmadı. Uygulamayı misafir modunda
-                  hemen kullanabilirsin; verin bu cihazda saklanır.
+                  Cloud accounts aren't configured yet (Firebase). You can start using the app in
+                  guest mode right away; your data is saved on this device.
                 </p>
                 <Button className="w-full" onClick={onGuest}>
-                  Çalışmaya başla
+                  Start studying
                 </Button>
               </div>
             )}
@@ -139,14 +137,14 @@ export default function AuthScreen({ onGuest }: { onGuest: () => void }) {
 function humanError(e: unknown): string {
   const code = (e as { code?: string })?.code || "";
   const map: Record<string, string> = {
-    "auth/invalid-email": "Geçersiz e-posta.",
-    "auth/missing-password": "Şifre gir.",
-    "auth/weak-password": "Şifre en az 6 karakter olmalı.",
-    "auth/email-already-in-use": "Bu e-posta zaten kayıtlı.",
-    "auth/invalid-credential": "E-posta veya şifre hatalı.",
-    "auth/user-not-found": "Kullanıcı bulunamadı.",
-    "auth/wrong-password": "Şifre hatalı.",
-    "auth/popup-closed-by-user": "Google penceresi kapatıldı.",
+    "auth/invalid-email": "Invalid email address.",
+    "auth/missing-password": "Please enter a password.",
+    "auth/weak-password": "Password must be at least 6 characters.",
+    "auth/email-already-in-use": "This email is already registered.",
+    "auth/invalid-credential": "Incorrect email or password.",
+    "auth/user-not-found": "User not found.",
+    "auth/wrong-password": "Wrong password.",
+    "auth/popup-closed-by-user": "The Google window was closed.",
   };
-  return map[code] || "Bir şeyler ters gitti. Tekrar dene.";
+  return map[code] || "Something went wrong. Please try again.";
 }

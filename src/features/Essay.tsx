@@ -34,14 +34,14 @@ export default function Essay() {
     <div className="space-y-4">
       <Card>
         <CardHeader>
-          <CardTitle>Günün Essay'i</CardTitle>
+          <CardTitle>Today's Essay</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="rounded-lg border bg-secondary/40 p-4">
             <div className="mb-2 flex items-center justify-between gap-2">
               <Badge>{prompt.type} · {prompt.topic}</Badge>
               <Button variant="ghost" size="sm" onClick={() => setPrompt(rnd())}>
-                <Dice5 className="size-4" /> Başka soru
+                <Dice5 className="size-4" /> Another question
               </Button>
             </div>
             <p className="font-medium">{prompt.q}</p>
@@ -50,33 +50,33 @@ export default function Essay() {
           <Textarea
             value={text}
             onChange={(e) => setText(e.target.value)}
-            placeholder="Essay'ini buraya yaz… (Task 2 için en az 250 kelime hedefle)"
+            placeholder="Write your essay here… (aim for at least 250 words for Task 2)"
             className="min-h-72 leading-relaxed"
           />
 
           <div className="flex flex-wrap items-center justify-between gap-2">
-            <span className="text-sm text-muted-foreground">{words} kelime</span>
+            <span className="text-sm text-muted-foreground">{words} words</span>
             <div className="flex gap-2">
-              <CopyButton text={claudePrompt} label="Claude'a puanlat" variant="outline" size="default" />
+              <CopyButton text={claudePrompt} label="Score with Claude" variant="outline" size="default" />
               <Button variant="success" onClick={save} disabled={!text.trim()}>
-                <Save className="size-4" /> Kaydet
+                <Save className="size-4" /> Save
               </Button>
             </div>
           </div>
           <p className="text-xs text-muted-foreground">
-            Kaydet → essay geçmişine ekler ve seriyi artırır. "Claude'a puanlat" → band değerlendirme
-            istemini panoya kopyalar, sohbete yapıştır.
+            Save → adds it to your essay history and extends your streak. "Score with Claude" →
+            copies a band-assessment prompt to your clipboard; paste it into the chat.
           </p>
         </CardContent>
       </Card>
 
       <Card>
         <CardHeader>
-          <CardTitle>Essay geçmişi</CardTitle>
+          <CardTitle>Essay history</CardTitle>
         </CardHeader>
         <CardContent className="space-y-3">
           {history.length === 0 ? (
-            <p className="text-sm text-muted-foreground">Henüz essay yok. Yukarıdan ilkini yaz!</p>
+            <p className="text-sm text-muted-foreground">No essays yet. Write your first one above!</p>
           ) : (
             history.map((e) => (
               <div key={e.id} className="rounded-lg border bg-secondary/30 p-3">
@@ -84,13 +84,13 @@ export default function Essay() {
                   <span className="font-semibold">{e.date}</span>
                   <Badge variant="secondary">{e.type}</Badge>
                   <span className="text-muted-foreground">{e.topic}</span>
-                  <span className="text-muted-foreground">· {e.words} kelime</span>
+                  <span className="text-muted-foreground">· {e.words} words</span>
                   <Button
                     variant="ghost"
                     size="icon"
                     className="ml-auto text-destructive"
                     onClick={() => {
-                      if (confirm("Bu essay silinsin mi?")) deleteEssay(e.id);
+                      if (confirm("Delete this essay?")) deleteEssay(e.id);
                     }}
                   >
                     <Trash2 className="size-4" />
@@ -98,7 +98,7 @@ export default function Essay() {
                 </div>
                 <p className="mt-1 text-xs text-muted-foreground">{e.q}</p>
                 <details className="mt-2">
-                  <summary className="cursor-pointer text-sm text-primary">Essay'i göster</summary>
+                  <summary className="cursor-pointer text-sm text-primary">Show essay</summary>
                   <pre className="mt-2 whitespace-pre-wrap rounded-md bg-card p-3 text-sm leading-relaxed">
                     {e.text}
                   </pre>

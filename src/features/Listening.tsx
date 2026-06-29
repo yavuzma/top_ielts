@@ -15,12 +15,12 @@ export default function Listening() {
       <Card>
         <CardContent className="flex items-center justify-between py-4">
           <div>
-            <h2 className="font-semibold">Dinleme — {state.level}</h2>
+            <h2 className="font-semibold">Listening — {state.level}</h2>
             <p className="text-sm text-muted-foreground">
-              Ücretsiz gerçek kaynaklar + önce / sırasında / sonra adımları.
+              Free real-world sources + before / during / after steps.
             </p>
           </div>
-          <Badge variant="secondary">{doneN} / {items.length} yapıldı</Badge>
+          <Badge variant="secondary">{doneN} / {items.length} done</Badge>
         </CardContent>
       </Card>
 
@@ -37,8 +37,8 @@ export default function Listening() {
                     <Badge variant="outline">{l.level}</Badge>
                   </div>
                   <p className="mt-0.5 text-sm text-muted-foreground">
-                    {l.topic} · ~{l.mins} dk · {l.source}
-                    {last ? ` · son: ${last}` : ""}
+                    {l.topic} · ~{l.mins} min · {l.source}
+                    {last ? ` · last: ${last}` : ""}
                   </p>
                 </div>
                 {last && <Badge variant="success">✓</Badge>}
@@ -50,12 +50,12 @@ export default function Listening() {
                   rel="noopener noreferrer"
                   className="flex items-center gap-2 rounded-lg border bg-secondary/40 p-3 text-sm font-medium text-primary hover:border-primary/50"
                 >
-                  <ExternalLink className="size-4" /> Kaynağı aç — {l.source}
+                  <ExternalLink className="size-4" /> Open source — {l.source}
                 </a>
 
-                <Steps title="1) Dinlemeden önce" items={l.before} />
-                <Steps title="2) Dinlerken" items={l.during} />
-                <Steps title="3) Dinledikten sonra" items={l.after} />
+                <Steps title="1) Before listening" items={l.before} />
+                <Steps title="2) While listening" items={l.during} />
+                <Steps title="3) After listening" items={l.after} />
 
                 <div className="flex justify-end">
                   <Button
@@ -63,7 +63,7 @@ export default function Listening() {
                     disabled={doneToday}
                     onClick={() => markListening(l.id)}
                   >
-                    {doneToday ? "Bugün dinlendi ✓" : "Bugün dinledim ✓"}
+                    {doneToday ? "Listened today ✓" : "Mark as listened today ✓"}
                   </Button>
                 </div>
               </CardContent>

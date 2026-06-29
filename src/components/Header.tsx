@@ -21,7 +21,7 @@ export default function Header({ theme, onToggleTheme }: { theme: string; onTogg
           </div>
           <div className="leading-tight">
             <div className="font-bold">{BRAND.name}</div>
-            <div className="text-[11px] text-muted-foreground">IELTS 9 yolculuğu</div>
+            <div className="text-[11px] text-muted-foreground">Road to IELTS 9</div>
           </div>
         </div>
 
@@ -47,29 +47,29 @@ export default function Header({ theme, onToggleTheme }: { theme: string; onTogg
           {enabled &&
             (syncing ? (
               <Badge variant="secondary" className="gap-1">
-                <Cloud className="size-3 animate-pulse" /> Senkron
+                <Cloud className="size-3 animate-pulse" /> Syncing
               </Badge>
             ) : user ? (
               <Badge variant="success" className="gap-1">
-                <Cloud className="size-3" /> Bulut
+                <Cloud className="size-3" /> Cloud
               </Badge>
             ) : (
               <Badge variant="warning" className="gap-1">
-                <CloudOff className="size-3" /> Yerel
+                <CloudOff className="size-3" /> Local
               </Badge>
             ))}
 
-          <Button variant="ghost" size="icon" onClick={onToggleTheme} title="Tema">
+          <Button variant="ghost" size="icon" onClick={onToggleTheme} title="Theme">
             {theme === "dark" ? <Sun className="size-4" /> : <Moon className="size-4" />}
           </Button>
 
           {user ? (
-            <Button variant="ghost" size="icon" onClick={() => void logout()} title="Çıkış">
+            <Button variant="ghost" size="icon" onClick={() => void logout()} title="Sign out">
               <LogOut className="size-4" />
             </Button>
           ) : (
             <span className="hidden items-center gap-1 text-xs text-muted-foreground sm:flex">
-              <UserIcon className="size-3.5" /> Misafir
+              <UserIcon className="size-3.5" /> Guest
             </span>
           )}
         </div>

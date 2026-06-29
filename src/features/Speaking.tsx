@@ -2,19 +2,19 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import CopyButton from "@/components/CopyButton";
 
 const PART2 =
-  "IELTS Speaking Part 2 yapalım. Bana bir cue card ver, 1 dk hazırlanayım, sonra cevabımı yazıyla vereceğim. Band puanı + düzeltme yap.";
+  "Let's do IELTS Speaking Part 2. Give me a cue card, let me prepare for 1 minute, then I'll answer in writing. Give a band score + corrections.";
 const FULL =
-  "IELTS Speaking tam tur yapalım (Part 1, 2, 3). Sırayla soru sor, ben yazıyla cevaplayayım. Sonunda her parça için band ve gelişim önerisi ver.";
+  "Let's do a full IELTS Speaking round (Parts 1, 2 and 3). Ask questions in order; I'll answer in writing. At the end, give a band and improvement tips for each part.";
 
 export default function Speaking() {
   return (
     <div className="space-y-4">
       <Card>
         <CardHeader>
-          <CardTitle>🗣️ Speaking — Claude ile pratik</CardTitle>
+          <CardTitle>🗣️ Speaking — Practise with Claude</CardTitle>
           <p className="text-sm text-muted-foreground">
-            En hızlı gelişim: aşağıdaki istemi kopyala, Claude sohbetine yapıştır, yazıyla cevap ver,
-            anında band + düzeltme al.
+            Fastest way to improve: copy a prompt below, paste it into a Claude chat, answer in
+            writing, and get an instant band + corrections.
           </p>
         </CardHeader>
         <CardContent className="space-y-3">
@@ -25,13 +25,13 @@ export default function Speaking() {
 
       <Card>
         <CardHeader>
-          <CardTitle>Bölümler</CardTitle>
+          <CardTitle>Parts</CardTitle>
         </CardHeader>
         <CardContent>
           <ul className="list-disc space-y-2 pl-5 text-sm">
-            <li><b>Part 1:</b> günlük konular (ev, iş, hobiler) — kısa, net cevaplar.</li>
-            <li><b>Part 2:</b> 2 dk monolog (cue card) — giriş → detay → kişisel bağ → sonuç.</li>
-            <li><b>Part 3:</b> soyut tartışma — fikrini örnekle gerekçelendir.</li>
+            <li><b>Part 1:</b> everyday topics (home, work, hobbies) — short, clear answers.</li>
+            <li><b>Part 2:</b> 2-minute monologue (cue card) — intro → detail → personal link → conclusion.</li>
+            <li><b>Part 3:</b> abstract discussion — justify your opinion with examples.</li>
           </ul>
         </CardContent>
       </Card>

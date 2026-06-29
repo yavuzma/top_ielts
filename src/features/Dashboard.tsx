@@ -34,44 +34,44 @@ export default function Dashboard() {
         <Card>
           <CardHeader className="pb-2">
             <CardTitle className="text-sm text-muted-foreground">
-              {state.level} ilerlemesi
+              {state.level} progress
             </CardTitle>
           </CardHeader>
           <CardContent>
             <div className="text-3xl font-bold text-primary">{pct}%</div>
             <Progress value={pct} className="mt-3" />
             <p className="mt-2 text-xs text-muted-foreground">
-              {done} / {total} görev
+              {done} / {total} tasks
             </p>
           </CardContent>
         </Card>
 
-        <StatCard icon={<Flame className="size-5 text-warning" />} label="Çalışma serisi" value={`${state.streak.count} gün`} hint="Her gün en az 1 aktivite" />
-        <StatCard icon={<PenLine className="size-5 text-primary" />} label="Essay serisi" value={`${state.essayStreak.count} gün`} hint={`${Object.keys(state.essays).length} essay yazıldı`} />
+        <StatCard icon={<Flame className="size-5 text-warning" />} label="Study streak" value={`${state.streak.count} days`} hint="At least 1 activity a day" />
+        <StatCard icon={<PenLine className="size-5 text-primary" />} label="Essay streak" value={`${state.essayStreak.count} days`} hint={`${Object.keys(state.essays).length} essays written`} />
         <StatCard
           icon={<Target className="size-5 text-success" />}
-          label="Sınava kalan"
-          value={daysLeft !== null ? `${daysLeft} gün` : "—"}
-          hint={daysLeft !== null ? "Profil'den güncelle" : "Hesap sekmesinden tarih gir"}
+          label="Days to exam"
+          value={daysLeft !== null ? `${daysLeft} days` : "—"}
+          hint={daysLeft !== null ? "Update in Account" : "Set a date in Account"}
         />
       </div>
 
       <Card>
         <CardHeader className="pb-2">
-          <CardTitle>Bugünün pratiği</CardTitle>
+          <CardTitle>Today's practice</CardTitle>
         </CardHeader>
         <CardContent className="flex flex-wrap gap-2">
-          <PracticePill ok={rDone} icon={<BookOpen className="size-4" />} label="Okuma" />
-          <PracticePill ok={lDone} icon={<Headphones className="size-4" />} label="Dinleme" />
-          <PracticePill ok={wDone} icon={<PenLine className="size-4" />} label="Yazma" />
+          <PracticePill ok={rDone} icon={<BookOpen className="size-4" />} label="Reading" />
+          <PracticePill ok={lDone} icon={<Headphones className="size-4" />} label="Listening" />
+          <PracticePill ok={wDone} icon={<PenLine className="size-4" />} label="Writing" />
         </CardContent>
       </Card>
 
       <Card>
         <CardHeader className="pb-2">
-          <CardTitle>Band hedefleri</CardTitle>
+          <CardTitle>Band targets</CardTitle>
           <p className="text-sm text-muted-foreground">
-            Deneme yaptıkça güncelle. 9/9 için her beceride 8.5+ hedefle.
+            Update as you take mock tests. For 9/9, aim for 8.5+ in every skill.
           </p>
         </CardHeader>
         <CardContent className="grid grid-cols-2 gap-3 sm:grid-cols-4">
@@ -96,7 +96,7 @@ export default function Dashboard() {
       <Card>
         <CardHeader className="pb-2">
           <CardTitle className="flex items-center gap-2">
-            Bugün ne yapmalıyım? <Badge variant="secondary">{state.level}</Badge>
+            What should I do today? <Badge variant="secondary">{state.level}</Badge>
           </CardTitle>
         </CardHeader>
         <CardContent>
