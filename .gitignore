@@ -23,5 +23,3 @@ resources/
 !.vscode/extensions.json
 .idea/
 Thumbs.db
-
-# keep legacy reference but ignore its noise — tracked intentionally

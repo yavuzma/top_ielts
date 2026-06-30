@@ -75,7 +75,6 @@ src/
   features/           # pages: Dashboard, LevelPlan, Grammar, Vocab, Reading, Listening,
                       #        Essay, Speaking, Resources, Account
   App.tsx             # providers + auth gate + tabbed shell
-_legacy/              # first vanilla version (kept for reference)
 ```
 
 Adding content: add an item to the relevant array (READING, GRAMMAR, VOCAB, …) in `src/data/content.ts`.
