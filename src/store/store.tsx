@@ -79,7 +79,7 @@ export function StudyProvider({ children }: { children: ReactNode }) {
   const lastPushed = useRef(0);
   const pushTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  // Uzaktaki belgeye yaz (debounce)
+  // Write to the remote document (debounced)
   const pushRemote = useCallback(
     (s: StudyState) => {
       if (!db || !user) return;
@@ -87,14 +87,14 @@ export function StudyProvider({ children }: { children: ReactNode }) {
       pushTimer.current = setTimeout(() => {
         lastPushed.current = s.updatedAt;
         setDoc(doc(db!, "users", user.uid), s as unknown as Record<string, unknown>).catch((e) =>
-          console.warn("Senkron yazma hatası:", e),
+          console.warn("Sync write error:", e),
         );
       }, 700);
     },
     [user],
   );
 
-  // Kimlik değiştiğinde: doğru anahtarı yükle, misafir verisini taşı, buluta bağlan
+  // On identity change: load the right key, migrate guest data, connect to the cloud
   useEffect(() => {
     let unsub: (() => void) | undefined;
     const key = user ? user.uid : "guest";
@@ -116,7 +116,7 @@ export function StudyProvider({ children }: { children: ReactNode }) {
           saveLS(key, base);
           setState(base);
           lastPushed.current = base.updatedAt;
-          // misafirken yapılan ilerlemeyi buluta taşı
+          // migrate progress made while a guest up to the cloud
           pushRemote(base);
           unsub = onSnapshot(ref, (s) => {
             if (!s.exists()) return;
@@ -128,7 +128,7 @@ export function StudyProvider({ children }: { children: ReactNode }) {
             }
           });
         } catch (e) {
-          console.warn("Bulut bağlantı hatası:", e);
+          console.warn("Cloud connection error:", e);
           saveLS(key, base);
           setState(base);
         } finally {
@@ -147,7 +147,7 @@ export function StudyProvider({ children }: { children: ReactNode }) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user?.uid]);
 
-  // Durumu uygula + kaydet + buluta gönder
+  // Apply state + persist + push to the cloud
   const commit = useCallback(
     (updater: (s: StudyState) => StudyState) => {
       setState((prev) => {

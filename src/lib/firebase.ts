@@ -1,6 +1,6 @@
 // =====================================================================
-//  Firebase başlatma — ortam değişkenleri (.env) üzerinden.
-//  Değişkenler yoksa uygulama "misafir" (yalnızca yerel) modda çalışır.
+//  Firebase initialization — via environment variables (.env).
+//  If the variables are missing, the app runs in "guest" (local-only) mode.
 // =====================================================================
 import { initializeApp, type FirebaseApp } from "firebase/app";
 import { getAuth, type Auth } from "firebase/auth";

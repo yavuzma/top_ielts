@@ -4,7 +4,7 @@ import tailwindcss from "@tailwindcss/vite";
 import { VitePWA } from "vite-plugin-pwa";
 import path from "node:path";
 
-// base: "./" => relatif yollar; GitHub Pages alt-dizininde de sorunsuz çalışır.
+// base: "./" => relative paths; works fine even in a GitHub Pages subdirectory.
 export default defineConfig({
   base: "./",
   plugins: [
@@ -33,7 +33,7 @@ export default defineConfig({
       },
       workbox: {
         globPatterns: ["**/*.{js,css,html,svg,png,woff2}"],
-        // Firebase/Google istekleri service worker tarafından önbelleğe alınmasın
+        // Don't let the service worker cache Firebase/Google requests
         navigateFallbackDenylist: [/^\/__/, /firestore/, /googleapis/],
       },
     }),
@@ -42,7 +42,7 @@ export default defineConfig({
     alias: { "@": path.resolve(__dirname, "./src") },
   },
   build: {
-    // Firebase SDK doğası gereği büyük; uyarı eşiğini yükseltiyoruz.
+    // The Firebase SDK is large by nature; raise the warning threshold.
     chunkSizeWarningLimit: 1200,
   },
 });

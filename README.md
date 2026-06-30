@@ -1,37 +1,37 @@
-# NineBands — IELTS hazırlık platformu
+# NineBands — IELTS preparation platform
 
-B1 → C1 seviyeli, hesap tabanlı, her cihazda senkronlanan IELTS hazırlık uygulaması.
-Kelime & grammar (B1), tam IELTS pratiği (B2–C1), günlük **okuma · dinleme · yazma**,
-ilerleme/seri takibi ve PWA desteği.
+An account-based IELTS preparation app for B1 → C1 levels that syncs across every device.
+Vocabulary & grammar (B1), full IELTS practice (B2–C1), daily **reading · listening · writing**,
+progress/streak tracking, and PWA support.
 
 **Stack:** Vite · React 19 · TypeScript · Tailwind v4 · shadcn/ui · Firebase (Auth + Firestore) · vite-plugin-pwa
 
 ---
 
-## Geliştirme (local)
+## Development (local)
 
 ```bash
 npm install
 npm run dev        # http://localhost:5173
-npm run build      # production derleme (dist/)
-npm run preview    # derlemeyi yerelde önizle
-npm run typecheck  # tip kontrolü
+npm run build      # production build (dist/)
+npm run preview    # preview the build locally
+npm run typecheck  # type checking
 ```
 
-Firebase ayarlanmadan da çalışır: uygulama **misafir modunda** (yalnızca o cihazda, localStorage) açılır.
+Works without Firebase configured: the app opens in **guest mode** (only on that device, localStorage).
 
 ---
 
-## Firebase kurulumu (hesaplar + bulut senkron)
+## Firebase setup (accounts + cloud sync)
 
 1. [console.firebase.google.com](https://console.firebase.google.com) → **Add project**.
-2. **Build → Authentication → Get started** → **Sign-in method**'tan
-   **Email/Password** ve istersen **Google**'ı etkinleştir.
-3. **Build → Firestore Database → Create database** (production mode) → bölge seç.
-4. **Rules** sekmesine `firestore.rules` içeriğini yapıştır ve **Publish** et
-   (her kullanıcı yalnızca kendi verisine erişir).
-5. **Project settings → Your apps → Web (`</>`)** ile bir web app kaydet, config değerlerini al.
-6. `.env.example` dosyasını `.env.local` olarak kopyala ve doldur:
+2. **Build → Authentication → Get started** → under **Sign-in method** enable
+   **Email/Password** and optionally **Google**.
+3. **Build → Firestore Database → Create database** (production mode) → pick a region.
+4. Paste the contents of `firestore.rules` into the **Rules** tab and **Publish**
+   (each user can access only their own data).
+5. Register a web app via **Project settings → Your apps → Web (`</>`)** and grab the config values.
+6. Copy `.env.example` to `.env.local` and fill it in:
 
    ```
    VITE_FIREBASE_API_KEY=...
@@ -42,50 +42,51 @@ Firebase ayarlanmadan da çalışır: uygulama **misafir modunda** (yalnızca o 
    VITE_FIREBASE_APP_ID=...
    ```
 
-> Firebase web anahtarları **gizli değildir** (kimlik amaçlıdır); güvenlik Firestore kurallarıyla
-> sağlanır. Yine de repoya commit'lemek yerine ortam değişkeni olarak vermek temiz yöntemdir.
+> Firebase web keys are **not secret** (they're for identification); security is enforced by
+> Firestore rules. Even so, providing them as environment variables instead of committing them to
+> the repo is the clean approach.
 
-GitHub Pages'te yayınlarken kullanıcı **kendi hesabıyla** giriş yapar (canlı yayında
-`Authentication → Settings → Authorized domains`'e Pages alan adını eklemeyi unutma).
+When publishing on GitHub Pages, users sign in **with their own account** (in production, don't
+forget to add the Pages domain to `Authentication → Settings → Authorized domains`).
 
 ---
 
-## Yayınlama — GitHub Pages (otomatik)
+## Publishing — GitHub Pages (automatic)
 
-1. Repoyu GitHub'a gönder (örn. `ninebands`).
+1. Push the repo to GitHub (e.g. `ninebands`).
 2. **Settings → Pages → Build and deployment → Source: GitHub Actions**.
-3. **Settings → Secrets and variables → Actions → Variables** altına 6 değişkeni ekle
-   (yukarıdaki `VITE_FIREBASE_*` adlarıyla).
-4. `main`'e her push'ta `.github/workflows/deploy.yml` otomatik derler ve yayınlar.
-   Link: `https://KULLANICIADIN.github.io/REPO/`
+3. Add the 6 variables under **Settings → Secrets and variables → Actions → Variables**
+   (with the `VITE_FIREBASE_*` names above).
+4. On every push to `main`, `.github/workflows/deploy.yml` builds and publishes automatically.
+   Link: `https://YOURUSERNAME.github.io/REPO/`
 
-`vite.config.ts`'te `base: "./"` olduğu için alt-dizinde sorunsuz çalışır.
-Telefon/tablette tarayıcıdan **"Ana ekrana ekle"** → uygulama gibi kurulur (PWA), çevrimdışı açılır.
+Because `vite.config.ts` uses `base: "./"`, it works fine under a subdirectory.
+On phone/tablet, **"Add to Home Screen"** from the browser → installs like an app (PWA), opens offline.
 
 ---
 
-## Proje yapısı
+## Project structure
 
 ```
 src/
-  data/content.ts     # tüm çalışma içeriği (seviye, grammar, kelime, okuma, dinleme, essay)
-  store/              # auth + per-user bulut senkron store (local-first, merge tabanlı)
-  components/ui/      # shadcn/ui bileşenleri
-  features/           # sayfalar: Dashboard, LevelPlan, Grammar, Vocab, Reading, Listening,
-                      #           Essay, Speaking, Resources, Account
-  App.tsx             # provider'lar + auth kapısı + sekmeli kabuk
-_legacy/              # ilk vanilla sürüm (referans için saklandı)
+  data/content.ts     # all study content (level, grammar, vocabulary, reading, listening, essay)
+  store/              # auth + per-user cloud sync store (local-first, merge-based)
+  components/ui/      # shadcn/ui components
+  features/           # pages: Dashboard, LevelPlan, Grammar, Vocab, Reading, Listening,
+                      #        Essay, Speaking, Resources, Account
+  App.tsx             # providers + auth gate + tabbed shell
+_legacy/              # first vanilla version (kept for reference)
 ```
 
-İçerik eklemek: `src/data/content.ts` içindeki ilgili diziye (READING, GRAMMAR, VOCAB, …) madde ekle.
+Adding content: add an item to the relevant array (READING, GRAMMAR, VOCAB, …) in `src/data/content.ts`.
 
 ---
 
-## Yol haritası (ticari)
+## Roadmap (commercial)
 
-- [x] Hesaplar + cihazlar arası bulut senkron
-- [x] PWA (kurulabilir, çevrimdışı)
-- [ ] Ödeme/abonelik (Stripe) + ücretsiz/premium içerik ayrımı
-- [ ] Sınav sayacı bildirimleri, haftalık ilerleme e-postası
-- [ ] İçerik yönetim paneli (admin)
-- [ ] Çoklu dil arayüzü (TR/EN)
+- [x] Accounts + cross-device cloud sync
+- [x] PWA (installable, offline)
+- [ ] Payment/subscription (Stripe) + free/premium content split
+- [ ] Exam countdown notifications, weekly progress email
+- [ ] Content management panel (admin)
+- [ ] Multi-language UI (TR/EN)

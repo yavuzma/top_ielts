@@ -50,7 +50,7 @@ export function emptyState(): StudyState {
   };
 }
 
-// İki durumu güvenli birleştir — tamamlananlar korunur, veri kaybı olmaz.
+// Safely merge two states — completed items are preserved, no data loss.
 export function mergeStates(local: StudyState, remote: Partial<StudyState>): StudyState {
   const out: StudyState = { ...local };
   out.tasks = { ...local.tasks };

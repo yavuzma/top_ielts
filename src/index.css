@@ -100,14 +100,14 @@
   }
 }
 
-/* Yumuşak global geçişler */
+/* Smooth global transitions */
 @layer base {
   html {
     scroll-behavior: smooth;
   }
 }
 
-/* Arka plan ışıltısı (commercial feel) — yavaşça nefes alır */
+/* Background glow (commercial feel) — breathes slowly */
 .app-aurora {
   background:
     radial-gradient(55rem 55rem at 12% -12%, color-mix(in oklch, var(--primary) 22%, transparent), transparent 60%),
@@ -123,13 +123,13 @@
   .app-aurora { animation: none; }
 }
 
-/* Kartlara ince derinlik + hover kalkışı */
+/* Subtle depth on cards + hover lift */
 [data-slot="card"] {
   transition: box-shadow 0.25s ease, transform 0.25s ease, border-color 0.25s ease;
   box-shadow: 0 1px 2px oklch(0 0 0 / 0.04), 0 8px 24px -16px oklch(0 0 0 / 0.18);
 }
 
-/* İnce kaydırma çubuğu */
+/* Thin scrollbar */
 * {
   scrollbar-width: thin;
   scrollbar-color: color-mix(in oklch, var(--foreground) 22%, transparent) transparent;
