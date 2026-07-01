@@ -40,6 +40,7 @@ export interface StudyState {
   reading: Record<string, string>; // id -> son tarih (YYYY-MM-DD)
   listening: Record<string, string>;
   library: Record<string, LibItem>; // saved AI-generated practice
+  wordDefs: Record<string, { d: string; e: string }>; // AI-filled defs for the 10k word bank
   bands: Record<string, string>;
   streak: StreakState;
   essayStreak: StreakState;
@@ -58,6 +59,7 @@ export function emptyState(): StudyState {
     reading: {},
     listening: {},
     library: {},
+    wordDefs: {},
     bands: {},
     streak: { count: 0, last: null },
     essayStreak: { count: 0, last: null },
@@ -77,6 +79,7 @@ export function mergeStates(local: StudyState, remote: Partial<StudyState>): Stu
   out.reading = { ...local.reading };
   out.listening = { ...local.listening };
   out.library = { ...local.library };
+  out.wordDefs = { ...local.wordDefs, ...remote.wordDefs };
 
   for (const k in remote.tasks) if (remote.tasks[k]) out.tasks[k] = true;
   for (const k in remote.grammar) if (remote.grammar[k]) out.grammar[k] = true;

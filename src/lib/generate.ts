@@ -67,6 +67,23 @@ ${READING_JSON_CONTRACT}`,
   return out;
 }
 
+export interface WordDef {
+  d: string; // concise learner definition
+  e: string; // one natural example sentence
+}
+
+// Fill a definition + example for a bare frequency-list word (cached by caller).
+export async function defineWord(word: string, signal?: AbortSignal): Promise<WordDef> {
+  const messages: ChatMessage[] = [
+    { role: "system", content: IELTS_SYSTEM },
+    {
+      role: "user",
+      content: `Define the English word "${word}" for an IELTS learner. Return ONLY minified JSON: {"d":"a concise one-line definition (learner-friendly)","e":"one natural example sentence using the word at IELTS Band 7-8"}. If the word has several senses, use the most common one.`,
+    },
+  ];
+  return chatJSON<WordDef>(messages, signal);
+}
+
 export async function generateListening(
   level: Level,
   section: 1 | 2 | 3 | 4,

@@ -10,6 +10,7 @@ import {
   Brain,
   Ruler,
   Target,
+  Layers,
   UserCog,
 } from "lucide-react";
 import { AuthProvider, useAuth } from "@/store/auth";
@@ -27,6 +28,7 @@ import Listening from "@/features/Listening";
 import Essay from "@/features/Essay";
 import Speaking from "@/features/Speaking";
 import Tactics from "@/features/Tactics";
+import WordBank from "@/features/WordBank";
 import Resources from "@/features/Resources";
 import Account from "@/features/Account";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -38,6 +40,7 @@ const TABS = [
   { v: "plan", label: "Plan", icon: Map },
   { v: "grammar", label: "Grammar", icon: Ruler },
   { v: "vocab", label: "Vocabulary", icon: Brain },
+  { v: "wordbank", label: "Word Bank", icon: Layers },
   { v: "reading", label: "Reading", icon: BookOpen },
   { v: "listening", label: "Listening", icon: Headphones },
   { v: "essay", label: "Writing", icon: PenLine },
@@ -71,6 +74,7 @@ function Shell({ onSignIn }: { onSignIn: () => void }) {
           <TabsContent value="plan"><LevelPlan /></TabsContent>
           <TabsContent value="grammar"><Grammar /></TabsContent>
           <TabsContent value="vocab"><Vocab /></TabsContent>
+          <TabsContent value="wordbank"><WordBank /></TabsContent>
           <TabsContent value="reading"><Reading /></TabsContent>
           <TabsContent value="listening"><Listening /></TabsContent>
           <TabsContent value="essay"><Essay /></TabsContent>

@@ -19,8 +19,19 @@ Delivered:
 - `src/components/AiTutor.tsx` — global floating "Ask AI" tutor on every tab,
   context-aware (knows the current tab), ask-anything anytime.
 - Reading tab now has an AI passage generator (first proof).
-Next: wire the generator into Listening/Vocab/Writing, add Task 1, cache
-generated items to Firestore, then the Templates & Tactics tab.
+
+**Shipped 2026-07-01 (all of the above +):**
+- AI woven into Listening (TTS-played generator), Vocab (per-word coach),
+  Writing (in-app "Score with AI").
+- Templates & Tactics tab (`src/data/tactics.ts`, `src/features/Tactics.tsx`)
+  with "Apply with AI".
+- Generated reading/listening tests cached to the synced library
+  (`StudyState.library`, capped) — reopen/delete, work offline.
+- 10,000-word Word Bank (`src/data/words10k.ts`, `src/features/WordBank.tsx`)
+  banded + decked, AI-filled definitions cached in `wordDefs`, wired into SRS.
+
+Remaining ideas: add Writing Task 1 (chart) upload/generation, progress
+charts, code-split the bundle (now ~1.1MB), notifications, Stripe.
 
 ## Hard constraints
 

@@ -60,6 +60,7 @@ interface StudyActions {
   markListening: (id: string) => void;
   saveToLibrary: (item: Omit<LibItem, "id" | "createdAt">) => string;
   deleteFromLibrary: (id: string) => void;
+  setWordDef: (word: string, def: { d: string; e: string }) => void;
   setBand: (key: string, value: string) => void;
   setExamDate: (date: string | null) => void;
   resetLocal: () => void;
@@ -237,6 +238,7 @@ export function StudyProvider({ children }: { children: ReactNode }) {
         delete library[id];
         return { ...s, library };
       }),
+    setWordDef: (word, def) => commit((s) => ({ ...s, wordDefs: { ...s.wordDefs, [word]: def } })),
     setBand: (key, value) => commit((s) => ({ ...s, bands: { ...s.bands, [key]: value } })),
     setExamDate: (date) => commit((s) => ({ ...s, examDate: date })),
     resetLocal: () => {

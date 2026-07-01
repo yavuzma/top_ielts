@@ -25,6 +25,10 @@ const CONTEXTS: Record<string, { label: string; starters: string[] }> = {
     label: "vocabulary & spaced repetition",
     starters: ["Give me 10 Band-9 synonyms for 'important'", "Use 'mitigate' in a sentence", "Test my collocations"],
   },
+  wordbank: {
+    label: "the 10,000-word frequency bank",
+    starters: ["Which words should I prioritise?", "Quiz me on the words I'm learning", "Make a story with 5 new words"],
+  },
   reading: {
     label: "IELTS reading practice",
     starters: ["Give me a True/False/Not Given tip", "Why is this answer 'Not Given'?", "How do I skim faster?"],
