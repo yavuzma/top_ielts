@@ -41,6 +41,10 @@ const CONTEXTS: Record<string, { label: string; starters: string[] }> = {
     label: "IELTS speaking",
     starters: ["Give me a Part 2 cue card", "How do I fill silence naturally?", "Upgrade my answer to Band 9"],
   },
+  tactics: {
+    label: "IELTS templates & tactics",
+    starters: ["Apply the opinion-essay template to my topic", "Best structure for a discussion essay?", "Band 7→9 quick wins"],
+  },
   resources: { label: "study resources", starters: ["Best free IELTS resources?", "How do I use these?"] },
   account: { label: "account settings", starters: ["How is my data stored?"] },
 };

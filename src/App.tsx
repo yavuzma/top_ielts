@@ -9,6 +9,7 @@ import {
   PenLine,
   Brain,
   Ruler,
+  Target,
   UserCog,
 } from "lucide-react";
 import { AuthProvider, useAuth } from "@/store/auth";
@@ -25,6 +26,7 @@ import Reading from "@/features/Reading";
 import Listening from "@/features/Listening";
 import Essay from "@/features/Essay";
 import Speaking from "@/features/Speaking";
+import Tactics from "@/features/Tactics";
 import Resources from "@/features/Resources";
 import Account from "@/features/Account";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -40,6 +42,7 @@ const TABS = [
   { v: "listening", label: "Listening", icon: Headphones },
   { v: "essay", label: "Writing", icon: PenLine },
   { v: "speaking", label: "Speaking", icon: MessageSquare },
+  { v: "tactics", label: "Tactics", icon: Target },
   { v: "resources", label: "Resources", icon: Library },
   { v: "account", label: "Account", icon: UserCog },
 ] as const;
@@ -72,6 +75,7 @@ function Shell({ onSignIn }: { onSignIn: () => void }) {
           <TabsContent value="listening"><Listening /></TabsContent>
           <TabsContent value="essay"><Essay /></TabsContent>
           <TabsContent value="speaking"><Speaking /></TabsContent>
+          <TabsContent value="tactics"><Tactics /></TabsContent>
           <TabsContent value="resources"><Resources /></TabsContent>
           <TabsContent value="account"><Account onSignIn={onSignIn} /></TabsContent>
         </Tabs>
