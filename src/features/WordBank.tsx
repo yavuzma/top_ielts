@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Sparkles, Volume2, Loader2, KeyRound, ArrowLeft, Library } from "lucide-react";
-import { WORDS, DECK_COUNT, DECK_SIZE, BANK_KEY, deckAt, levelOfRank } from "@/data/words10k";
+import { WORDS, BANK_KEY, CEFR_ORDER, LEVEL_COUNTS, decksForLevel, type Cefr } from "@/data/words10k";
 import { useStudy } from "@/store/store";
 import { newCard, previewIntervals, isDue, type Grade } from "@/lib/srs";
 import { defineWord } from "@/lib/generate";
@@ -33,9 +33,9 @@ function speak(word: string) {
 
 export default function WordBank() {
   const { state } = useStudy();
-  const [queue, setQueue] = useState<string[] | null>(null); // active session words
+  const [cefr, setCefr] = useState<Cefr>("C1");
+  const [queue, setQueue] = useState<string[] | null>(null);
 
-  // How many bank words have been studied / are due.
   const { learned, due } = useMemo(() => {
     let learned = 0;
     let due = 0;
@@ -47,9 +47,7 @@ export default function WordBank() {
     return { learned, due };
   }, [state.srs]);
 
-  if (queue) {
-    return <Session words={queue} onExit={() => setQueue(null)} />;
-  }
+  if (queue) return <Session words={queue} onExit={() => setQueue(null)} />;
 
   function startDue() {
     const words = Object.keys(state.srs)
@@ -58,15 +56,14 @@ export default function WordBank() {
     if (words.length) setQueue(words.slice(0, 40));
   }
 
-  function startDeck(index: number) {
-    const d = deckAt(index);
-    // due cards in this deck first, then new (unseen) words
-    const dueW = d.words.filter((w) => state.srs[bankKey(w)] && isDue(state.srs[bankKey(w)]));
-    const newW = d.words.filter((w) => !state.srs[bankKey(w)]);
-    const words = [...dueW, ...newW].slice(0, 25);
-    if (words.length) setQueue(words);
-    else setQueue(d.words.slice(0, 25)); // all reviewed & not due → let them re-study anyway
+  function startDeck(words: string[]) {
+    const dueW = words.filter((w) => state.srs[bankKey(w)] && isDue(state.srs[bankKey(w)]));
+    const newW = words.filter((w) => !state.srs[bankKey(w)]);
+    const q = [...dueW, ...newW];
+    setQueue((q.length ? q : words).slice(0, 25));
   }
+
+  const decks = decksForLevel(cefr);
 
   return (
     <div className="space-y-4">
@@ -74,11 +71,11 @@ export default function WordBank() {
         <div className="flex flex-wrap items-center justify-between gap-3">
           <div>
             <h2 className="flex items-center gap-2 font-semibold">
-              <Library className="size-5 text-primary" /> Word Bank — {WORDS.length.toLocaleString()} words
+              <Library className="size-5 text-primary" /> Word Bank — Oxford {WORDS.length.toLocaleString()} (CEFR A1–C1)
             </h2>
             <p className="text-sm text-muted-foreground">
-              The most frequent English words, banded by level. Definitions are written by AI on first
-              study and remembered with spaced repetition.
+              Real Oxford 3000/5000 words at their true CEFR level. Definitions are written by AI on
+              first study and locked in with spaced repetition.
             </p>
           </div>
           <div className="flex gap-4 text-center">
@@ -99,57 +96,43 @@ export default function WordBank() {
         )}
       </Card>
 
-      <DeckGrid state={state} onPick={startDeck} />
-    </div>
-  );
-}
+      {/* CEFR level selector */}
+      <div className="flex flex-wrap gap-2">
+        {CEFR_ORDER.map((c) => (
+          <button
+            key={c}
+            onClick={() => setCefr(c)}
+            className={`rounded-full border px-3 py-1.5 text-sm font-medium transition-colors ${
+              cefr === c ? "border-primary bg-primary text-primary-foreground" : "bg-card hover:border-primary/50"
+            }`}
+          >
+            {c} <span className="opacity-70">· {LEVEL_COUNTS[c]}</span>
+          </button>
+        ))}
+      </div>
 
-function DeckGrid({
-  state,
-  onPick,
-}: {
-  state: ReturnType<typeof useStudy>["state"];
-  onPick: (i: number) => void;
-}) {
-  const [shown, setShown] = useState(24);
-  const decks = Array.from({ length: Math.min(shown, DECK_COUNT) }, (_, i) => i);
-
-  return (
-    <div className="space-y-3">
       <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
-        {decks.map((i) => {
-          const from = i * DECK_SIZE;
-          const words = WORDS.slice(from, from + DECK_SIZE);
-          const done = words.filter((w) => state.srs[bankKey(w)]).length;
-          const level = levelOfRank(from);
+        {decks.map((d) => {
+          const done = d.words.filter((w) => state.srs[bankKey(w)]).length;
           return (
             <button
-              key={i}
-              onClick={() => onPick(i)}
+              key={d.index}
+              onClick={() => startDeck(d.words)}
               className="rounded-xl border bg-card/60 p-3 text-left transition-colors hover:border-primary/50"
             >
               <div className="flex items-center justify-between">
-                <span className="text-sm font-semibold">Deck {i + 1}</span>
-                <Badge variant="outline">{level}</Badge>
+                <span className="text-sm font-semibold">Deck {d.index + 1}</span>
+                <Badge variant="outline">{d.cefr}</Badge>
               </div>
-              <div className="mt-0.5 text-xs text-muted-foreground">
-                Words {from + 1}–{from + words.length}
-              </div>
+              <div className="mt-0.5 text-xs text-muted-foreground">{d.words.length} words</div>
               <div className="mt-2 h-1.5 overflow-hidden rounded-full bg-secondary">
-                <div className="h-full bg-primary" style={{ width: `${(done / words.length) * 100}%` }} />
+                <div className="h-full bg-primary" style={{ width: `${(done / d.words.length) * 100}%` }} />
               </div>
-              <div className="mt-1 text-[11px] text-muted-foreground">
-                {done}/{words.length} learned
-              </div>
+              <div className="mt-1 text-[11px] text-muted-foreground">{done}/{d.words.length} learned</div>
             </button>
           );
         })}
       </div>
-      {shown < DECK_COUNT && (
-        <Button variant="outline" className="w-full" onClick={() => setShown((n) => n + 24)}>
-          Show more decks ({DECK_COUNT - shown} left)
-        </Button>
-      )}
     </div>
   );
 }

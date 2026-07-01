@@ -26,8 +26,8 @@ const CONTEXTS: Record<string, { label: string; starters: string[] }> = {
     starters: ["Give me 10 Band-9 synonyms for 'important'", "Use 'mitigate' in a sentence", "Test my collocations"],
   },
   wordbank: {
-    label: "the 10,000-word frequency bank",
-    starters: ["Which words should I prioritise?", "Quiz me on the words I'm learning", "Make a story with 5 new words"],
+    label: "the Oxford CEFR word bank (A1–C1)",
+    starters: ["Which C1 words matter most for IELTS?", "Quiz me on the words I'm learning", "Make a story with 5 new words"],
   },
   reading: {
     label: "IELTS reading practice",
