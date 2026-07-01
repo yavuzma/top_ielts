@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { ExternalLink, Wand2, KeyRound, Sparkles, Loader2, Play, Square, Eye } from "lucide-react";
+import { ExternalLink, Wand2, KeyRound, Sparkles, Loader2, Play, Square, Eye, Bookmark, BookmarkCheck, Trash2 } from "lucide-react";
 import { LISTENING } from "@/data/content";
 import { useStudy, todayStr } from "@/store/store";
 import { Card, CardContent } from "@/components/ui/card";
@@ -101,15 +101,21 @@ function Steps({ title, items }: { title: string; items: string[] }) {
 const SECTIONS = [1, 2, 3, 4] as const;
 
 function ListeningGenerator({ level }: { level: Level }) {
+  const { state, saveToLibrary, deleteFromLibrary } = useStudy();
   const [keyReady, setKeyReady] = useState(hasKey());
   const [section, setSection] = useState<1 | 2 | 3 | 4>(1);
   const [topic, setTopic] = useState("");
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
   const [test, setTest] = useState<GenListening | null>(null);
+  const [savedId, setSavedId] = useState<string | null>(null);
   const [showTranscript, setShowTranscript] = useState(false);
   const [playing, setPlaying] = useState(false);
   const speakerRef = useRef<Speaker | null>(null);
+
+  const saved = Object.values(state.library)
+    .filter((i) => i.kind === "listening")
+    .sort((a, b) => b.createdAt - a.createdAt);
 
   // Stop any narration when the component unmounts.
   useEffect(() => () => speakerRef.current?.stop(), []);
@@ -119,6 +125,7 @@ function ListeningGenerator({ level }: { level: Level }) {
     setPlaying(false);
     setBusy(true);
     setError("");
+    setSavedId(null);
     setShowTranscript(false);
     try {
       const t = await generateListening(level, section, topic);
@@ -128,6 +135,12 @@ function ListeningGenerator({ level }: { level: Level }) {
     } finally {
       setBusy(false);
     }
+  }
+
+  function save() {
+    if (!test || savedId) return;
+    const id = saveToLibrary({ kind: "listening", level: test.level, title: test.title, payload: test });
+    setSavedId(id);
   }
 
   function play() {
@@ -228,6 +241,9 @@ function ListeningGenerator({ level }: { level: Level }) {
               <Button variant="ghost" size="sm" onClick={() => setShowTranscript((v) => !v)}>
                 <Eye className="size-4" /> {showTranscript ? "Hide" : "Show"} transcript
               </Button>
+              <Button variant={savedId ? "ghost" : "success"} size="sm" onClick={save} disabled={!!savedId}>
+                {savedId ? <><BookmarkCheck className="size-4" /> Saved</> : <><Bookmark className="size-4" /> Save</>}
+              </Button>
             </div>
 
             {showTranscript && (
@@ -261,6 +277,38 @@ function ListeningGenerator({ level }: { level: Level }) {
                 ))}
               </ol>
             </details>
+          </div>
+        )}
+
+        {saved.length > 0 && (
+          <div className="space-y-1">
+            <div className="text-xs font-semibold text-muted-foreground">Saved tests ({saved.length})</div>
+            {saved.map((it) => (
+              <div key={it.id} className="flex items-center gap-2 rounded-lg border bg-card px-3 py-2 text-sm">
+                <button
+                  className="flex-1 text-left hover:text-primary"
+                  onClick={() => {
+                    stop();
+                    setTest(it.payload as GenListening);
+                    setSavedId(it.id);
+                    setShowTranscript(false);
+                  }}
+                >
+                  <span className="font-medium">{it.title}</span>{" "}
+                  <span className="text-muted-foreground">· {it.level}</span>
+                </button>
+                <button
+                  className="text-muted-foreground hover:text-destructive"
+                  title="Delete"
+                  onClick={() => {
+                    deleteFromLibrary(it.id);
+                    if (savedId === it.id) setSavedId(null);
+                  }}
+                >
+                  <Trash2 className="size-4" />
+                </button>
+              </div>
+            ))}
           </div>
         )}
       </CardContent>

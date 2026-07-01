@@ -14,7 +14,9 @@ import type { Level } from "@/data/content";
 import {
   emptyState,
   mergeStates,
+  LIBRARY_CAP,
   type EssayEntry,
+  type LibItem,
   type StudyState,
 } from "@/store/types";
 import { newCard, schedule, type Grade } from "@/lib/srs";
@@ -56,6 +58,8 @@ interface StudyActions {
   deleteEssay: (id: string) => void;
   markReading: (id: string) => void;
   markListening: (id: string) => void;
+  saveToLibrary: (item: Omit<LibItem, "id" | "createdAt">) => string;
+  deleteFromLibrary: (id: string) => void;
   setBand: (key: string, value: string) => void;
   setExamDate: (date: string | null) => void;
   resetLocal: () => void;
@@ -215,6 +219,24 @@ export function StudyProvider({ children }: { children: ReactNode }) {
         listening: { ...s.listening, [id]: todayStr() },
         streak: bump(s.streak),
       })),
+    saveToLibrary: (item) => {
+      const id = "g" + Date.now();
+      commit((s) => {
+        const next = { ...s.library, [id]: { ...item, id, createdAt: Date.now() } };
+        // Cap to the most recent items so the synced doc stays small.
+        const kept = Object.values(next)
+          .sort((a, b) => b.createdAt - a.createdAt)
+          .slice(0, LIBRARY_CAP);
+        return { ...s, library: Object.fromEntries(kept.map((i) => [i.id, i])) };
+      });
+      return id;
+    },
+    deleteFromLibrary: (id) =>
+      commit((s) => {
+        const library = { ...s.library };
+        delete library[id];
+        return { ...s, library };
+      }),
     setBand: (key, value) => commit((s) => ({ ...s, bands: { ...s.bands, [key]: value } })),
     setExamDate: (date) => commit((s) => ({ ...s, examDate: date })),
     resetLocal: () => {

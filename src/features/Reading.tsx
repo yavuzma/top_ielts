@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Sparkles, Loader2, KeyRound, Wand2 } from "lucide-react";
+import { Sparkles, Loader2, KeyRound, Wand2, Bookmark, BookmarkCheck, Trash2 } from "lucide-react";
 import { READING } from "@/data/content";
 import { useStudy, todayStr } from "@/store/store";
 import { Card, CardContent } from "@/components/ui/card";
@@ -99,15 +99,22 @@ export default function Reading() {
 
 // --- AI passage generator ------------------------------------------------
 function Generator({ level }: { level: "B1" | "B2" | "C1" }) {
+  const { state, saveToLibrary, deleteFromLibrary } = useStudy();
   const [keyReady, setKeyReady] = useState(hasKey());
   const [topic, setTopic] = useState("");
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
   const [test, setTest] = useState<GenReading | null>(null);
+  const [savedId, setSavedId] = useState<string | null>(null);
+
+  const saved = Object.values(state.library)
+    .filter((i) => i.kind === "reading")
+    .sort((a, b) => b.createdAt - a.createdAt);
 
   async function run() {
     setBusy(true);
     setError("");
+    setSavedId(null);
     try {
       const r = await generateReading(level, topic);
       setTest(r);
@@ -116,6 +123,12 @@ function Generator({ level }: { level: "B1" | "B2" | "C1" }) {
     } finally {
       setBusy(false);
     }
+  }
+
+  function save() {
+    if (!test || savedId) return;
+    const id = saveToLibrary({ kind: "reading", level: test.level, title: test.title, payload: test });
+    setSavedId(id);
   }
 
   return (
@@ -166,13 +179,66 @@ function Generator({ level }: { level: "B1" | "B2" | "C1" }) {
           </div>
         )}
 
-        {test && <GeneratedTest test={test} onRegenerate={() => void run()} busy={busy} />}
+        {test && (
+          <GeneratedTest
+            test={test}
+            onRegenerate={() => void run()}
+            busy={busy}
+            saved={!!savedId}
+            onSave={save}
+          />
+        )}
+
+        {saved.length > 0 && (
+          <div className="space-y-1">
+            <div className="text-xs font-semibold text-muted-foreground">Saved passages ({saved.length})</div>
+            {saved.map((it) => (
+              <div
+                key={it.id}
+                className="flex items-center gap-2 rounded-lg border bg-card px-3 py-2 text-sm"
+              >
+                <button
+                  className="flex-1 text-left hover:text-primary"
+                  onClick={() => {
+                    setTest(it.payload as GenReading);
+                    setSavedId(it.id);
+                  }}
+                >
+                  <span className="font-medium">{it.title}</span>{" "}
+                  <span className="text-muted-foreground">· {it.level}</span>
+                </button>
+                <button
+                  className="text-muted-foreground hover:text-destructive"
+                  title="Delete"
+                  onClick={() => {
+                    deleteFromLibrary(it.id);
+                    if (savedId === it.id) setSavedId(null);
+                  }}
+                >
+                  <Trash2 className="size-4" />
+                </button>
+              </div>
+            ))}
+          </div>
+        )}
       </CardContent>
     </Card>
   );
 }
 
-function GeneratedTest({ test, onRegenerate, busy }: { test: GenReading; onRegenerate: () => void; busy: boolean }) {
+function GeneratedTest({
+  test,
+  onRegenerate,
+  busy,
+  saved,
+  onSave,
+}: {
+  test: GenReading;
+  onRegenerate: () => void;
+  busy: boolean;
+  saved: boolean;
+  onSave: () => void;
+}) {
   return (
     <div className="space-y-4 rounded-lg border bg-card p-4">
       <div className="flex items-center gap-2">
@@ -213,9 +279,14 @@ function GeneratedTest({ test, onRegenerate, busy }: { test: GenReading; onRegen
         </ol>
       </details>
 
-      <Button variant="outline" size="sm" onClick={onRegenerate} disabled={busy}>
-        <Sparkles className="size-4" /> Generate another
-      </Button>
+      <div className="flex flex-wrap gap-2">
+        <Button variant="outline" size="sm" onClick={onRegenerate} disabled={busy}>
+          <Sparkles className="size-4" /> Generate another
+        </Button>
+        <Button variant={saved ? "ghost" : "success"} size="sm" onClick={onSave} disabled={saved}>
+          {saved ? <><BookmarkCheck className="size-4" /> Saved</> : <><Bookmark className="size-4" /> Save to library</>}
+        </Button>
+      </div>
     </div>
   );
 }

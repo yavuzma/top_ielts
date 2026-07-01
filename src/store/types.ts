@@ -16,6 +16,20 @@ export interface StreakState {
   last: string | null;
 }
 
+// A saved AI-generated practice item (reading passage or listening test).
+// `payload` holds the full GenReading / GenListening object.
+export interface LibItem {
+  id: string;
+  kind: "reading" | "listening";
+  level: Level;
+  title: string;
+  createdAt: number;
+  payload: unknown;
+}
+
+// Keep the synced document small: cap how many generated items we retain.
+export const LIBRARY_CAP = 40;
+
 export interface StudyState {
   level: Level;
   tasks: Record<string, boolean>;
@@ -25,6 +39,7 @@ export interface StudyState {
   essays: Record<string, EssayEntry>;
   reading: Record<string, string>; // id -> son tarih (YYYY-MM-DD)
   listening: Record<string, string>;
+  library: Record<string, LibItem>; // saved AI-generated practice
   bands: Record<string, string>;
   streak: StreakState;
   essayStreak: StreakState;
@@ -42,6 +57,7 @@ export function emptyState(): StudyState {
     essays: {},
     reading: {},
     listening: {},
+    library: {},
     bands: {},
     streak: { count: 0, last: null },
     essayStreak: { count: 0, last: null },
@@ -60,6 +76,7 @@ export function mergeStates(local: StudyState, remote: Partial<StudyState>): Stu
   out.essays = { ...local.essays };
   out.reading = { ...local.reading };
   out.listening = { ...local.listening };
+  out.library = { ...local.library };
 
   for (const k in remote.tasks) if (remote.tasks[k]) out.tasks[k] = true;
   for (const k in remote.grammar) if (remote.grammar[k]) out.grammar[k] = true;
@@ -79,6 +96,13 @@ export function mergeStates(local: StudyState, remote: Partial<StudyState>): Stu
     if (!out.reading[id] || remote.reading[id]! > out.reading[id]) out.reading[id] = remote.reading[id]!;
   for (const id in remote.listening)
     if (!out.listening[id] || remote.listening[id]! > out.listening[id]) out.listening[id] = remote.listening[id]!;
+
+  // Library: union by id, keep the newest, then cap to the most recent items.
+  for (const id in remote.library) if (!out.library[id]) out.library[id] = remote.library[id]!;
+  const kept = Object.values(out.library)
+    .sort((a, b) => b.createdAt - a.createdAt)
+    .slice(0, LIBRARY_CAP);
+  out.library = Object.fromEntries(kept.map((i) => [i.id, i]));
 
   out.bands = { ...local.bands, ...remote.bands };
   if ((remote.streak?.count || 0) > local.streak.count) out.streak = remote.streak!;
