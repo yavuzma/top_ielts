@@ -1,9 +1,15 @@
+import { useState } from "react";
+import { Sparkles, Loader2, KeyRound, Wand2 } from "lucide-react";
 import { READING } from "@/data/content";
 import { useStudy, todayStr } from "@/store/store";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { Input } from "@/components/ui/input";
 import CopyButton from "@/components/CopyButton";
+import ApiKeyForm from "@/components/ApiKeyForm";
+import { hasKey } from "@/lib/openai";
+import { generateReading, type GenReading } from "@/lib/generate";
 
 export default function Reading() {
   const { state, markReading } = useStudy();
@@ -17,12 +23,14 @@ export default function Reading() {
           <div>
             <h2 className="font-semibold">Reading — {state.level}</h2>
             <p className="text-sm text-muted-foreground">
-              Read the text, answer the questions, then check with the answer key.
+              Generate a fresh exam-quality passage, or work through the library below.
             </p>
           </div>
           <Badge variant="secondary">{doneN} / {items.length} read</Badge>
         </CardContent>
       </Card>
+
+      <Generator level={state.level} />
 
       {items.map((r) => {
         const last = state.reading[r.id];
@@ -85,6 +93,129 @@ export default function Reading() {
           </Card>
         );
       })}
+    </div>
+  );
+}
+
+// --- AI passage generator ------------------------------------------------
+function Generator({ level }: { level: "B1" | "B2" | "C1" }) {
+  const [keyReady, setKeyReady] = useState(hasKey());
+  const [topic, setTopic] = useState("");
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState("");
+  const [test, setTest] = useState<GenReading | null>(null);
+
+  async function run() {
+    setBusy(true);
+    setError("");
+    try {
+      const r = await generateReading(level, topic);
+      setTest(r);
+    } catch (e) {
+      setError((e as Error).message || "Generation failed.");
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  return (
+    <Card className="border-primary/30 bg-primary/[0.03]">
+      <CardContent className="space-y-3 py-4">
+        <div className="flex items-center gap-2">
+          <span className="grid size-8 place-items-center rounded-full bg-primary/15 text-primary">
+            <Wand2 className="size-4" />
+          </span>
+          <div>
+            <div className="text-sm font-semibold">AI reading generator</div>
+            <div className="text-xs text-muted-foreground">
+              Original {level} passage + IELTS questions, made to exam standard.
+            </div>
+          </div>
+        </div>
+
+        {!keyReady ? (
+          <div className="space-y-2 rounded-lg border bg-card p-3">
+            <div className="flex items-center gap-2 text-sm font-medium">
+              <KeyRound className="size-4 text-primary" /> Connect your AI to generate practice
+            </div>
+            <ApiKeyForm onSaved={() => setKeyReady(true)} />
+          </div>
+        ) : (
+          <div className="flex flex-wrap items-center gap-2">
+            <Input
+              value={topic}
+              onChange={(e) => setTopic(e.target.value)}
+              placeholder="Optional topic (e.g. volcanoes, remote work)…"
+              className="h-10 max-w-xs flex-1"
+              disabled={busy}
+              onKeyDown={(e) => e.key === "Enter" && !busy && void run()}
+            />
+            <Button onClick={() => void run()} disabled={busy}>
+              {busy ? (
+                <><Loader2 className="size-4 animate-spin" /> Writing…</>
+              ) : (
+                <><Sparkles className="size-4" /> Generate passage</>
+              )}
+            </Button>
+          </div>
+        )}
+
+        {error && (
+          <div className="rounded-lg border border-destructive/40 bg-destructive/10 p-3 text-sm text-destructive">
+            {error}
+          </div>
+        )}
+
+        {test && <GeneratedTest test={test} onRegenerate={() => void run()} busy={busy} />}
+      </CardContent>
+    </Card>
+  );
+}
+
+function GeneratedTest({ test, onRegenerate, busy }: { test: GenReading; onRegenerate: () => void; busy: boolean }) {
+  return (
+    <div className="space-y-4 rounded-lg border bg-card p-4">
+      <div className="flex items-center gap-2">
+        <span className="font-semibold">{test.title}</span>
+        <Badge variant="outline">{test.level}</Badge>
+        <Badge variant="secondary">~{test.words} words</Badge>
+      </div>
+
+      <div className="space-y-3 rounded-lg border bg-secondary/30 p-4 leading-relaxed">
+        {test.text.split("\n\n").map((p, i) => (
+          <p key={i}>{p}</p>
+        ))}
+      </div>
+
+      <div>
+        <h3 className="mb-1 font-semibold">Questions</h3>
+        <ol className="list-decimal space-y-1.5 pl-5 text-sm">
+          {test.questions.map((q, i) => (
+            <li key={i}>
+              <span className="mr-1 rounded bg-secondary px-1 text-[11px] font-medium text-muted-foreground">
+                {q.type}
+              </span>
+              {q.q}
+            </li>
+          ))}
+        </ol>
+      </div>
+
+      <details className="rounded-lg border bg-secondary/30 p-3">
+        <summary className="cursor-pointer text-sm font-medium text-primary">Show answer key & explanations</summary>
+        <ol className="mt-2 list-decimal space-y-1.5 pl-5 text-sm">
+          {test.questions.map((q, i) => (
+            <li key={i}>
+              <span className="font-medium text-success">{q.a}</span>
+              {q.why && <span className="text-muted-foreground"> — {q.why}</span>}
+            </li>
+          ))}
+        </ol>
+      </details>
+
+      <Button variant="outline" size="sm" onClick={onRegenerate} disabled={busy}>
+        <Sparkles className="size-4" /> Generate another
+      </Button>
     </div>
   );
 }

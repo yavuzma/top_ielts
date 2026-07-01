@@ -102,3 +102,67 @@ export async function chatStream(
   }
   return full;
 }
+
+// Non-streaming completion — returns the whole reply as one string.
+// Used when we need a complete answer before showing anything (e.g. JSON).
+export async function chatOnce(
+  messages: ChatMessage[],
+  opts: { json?: boolean; temperature?: number; signal?: AbortSignal } = {},
+): Promise<string> {
+  const key = getKey();
+  if (!key) throw new Error("No API key set.");
+
+  const res = await fetch("https://api.openai.com/v1/chat/completions", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${key}`,
+    },
+    body: JSON.stringify({
+      model: getModel(),
+      messages,
+      temperature: opts.temperature ?? 0.8,
+      ...(opts.json ? { response_format: { type: "json_object" } } : {}),
+    }),
+    signal: opts.signal,
+  });
+
+  if (!res.ok) {
+    let detail = `${res.status}`;
+    try {
+      const j = await res.json();
+      detail = j?.error?.message ?? detail;
+    } catch {
+      /* ignore */
+    }
+    throw new Error(detail);
+  }
+
+  const j = await res.json();
+  return j?.choices?.[0]?.message?.content ?? "";
+}
+
+// Generate structured data from a prompt and parse it as JSON of type T.
+// Tolerates models that wrap JSON in ```fences``` or add stray prose.
+export async function chatJSON<T>(
+  messages: ChatMessage[],
+  signal?: AbortSignal,
+): Promise<T> {
+  const raw = await chatOnce(messages, { json: true, temperature: 0.85, signal });
+  return parseLooseJSON<T>(raw);
+}
+
+export function parseLooseJSON<T>(raw: string): T {
+  const cleaned = raw.trim().replace(/^```(?:json)?/i, "").replace(/```$/, "").trim();
+  try {
+    return JSON.parse(cleaned) as T;
+  } catch {
+    // Fall back to the first {...} or [...] block we can find.
+    const start = cleaned.search(/[[{]/);
+    const end = Math.max(cleaned.lastIndexOf("}"), cleaned.lastIndexOf("]"));
+    if (start !== -1 && end > start) {
+      return JSON.parse(cleaned.slice(start, end + 1)) as T;
+    }
+    throw new Error("The AI returned malformed data. Please try again.");
+  }
+}

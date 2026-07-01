@@ -16,6 +16,7 @@ import { StudyProvider } from "@/store/store";
 import { useTheme } from "@/hooks/useTheme";
 import AuthScreen from "@/components/AuthScreen";
 import Header from "@/components/Header";
+import AiTutor from "@/components/AiTutor";
 import Dashboard from "@/features/Dashboard";
 import LevelPlan from "@/features/LevelPlan";
 import Grammar from "@/features/Grammar";
@@ -45,12 +46,13 @@ const TABS = [
 
 function Shell({ onSignIn }: { onSignIn: () => void }) {
   const { theme, toggle } = useTheme();
+  const [tab, setTab] = useState("dashboard");
   return (
     <div className="relative min-h-screen">
       <div className="app-aurora pointer-events-none fixed inset-0 -z-10" />
       <Header theme={theme} onToggleTheme={toggle} />
       <main className="mx-auto max-w-5xl px-4 py-6">
-        <Tabs defaultValue="dashboard">
+        <Tabs value={tab} onValueChange={setTab}>
           <div className="-mx-4 overflow-x-auto px-4 pb-1">
             <TabsList className="w-max">
               {TABS.map((t) => (
@@ -77,6 +79,7 @@ function Shell({ onSignIn }: { onSignIn: () => void }) {
       <footer className="border-t py-6 text-center text-xs text-muted-foreground">
         NineBands · your progress is safe. Aim for 9/9 💪
       </footer>
+      <AiTutor tab={tab} />
     </div>
   );
 }
