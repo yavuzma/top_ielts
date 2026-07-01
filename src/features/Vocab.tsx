@@ -1,11 +1,14 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { Sparkles, Volume2, RotateCcw } from "lucide-react";
+import { Sparkles, Volume2, RotateCcw, Brain, Loader2, KeyRound } from "lucide-react";
 import { VOCAB } from "@/data/content";
 import { useStudy } from "@/store/store";
 import { newCard, previewIntervals, type Grade } from "@/lib/srs";
 import { dueDeck, computeStats, type DeckCard } from "@/lib/vocabStats";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import ApiKeyForm from "@/components/ApiKeyForm";
+import { chatStream, hasKey, type ChatMessage } from "@/lib/openai";
+import { IELTS_SYSTEM } from "@/lib/ielts";
 import {
   Select,
   SelectContent,
@@ -207,11 +210,85 @@ export default function Vocab() {
             </Button>
           )}
 
+          {flipped && <WordCoach key={card.key} word={card.w} def={card.d} />}
+
           <p className="flex items-center justify-center gap-1.5 text-center text-xs text-muted-foreground">
             <RotateCcw className="size-3" />
             Grade honestly — the algorithm picks the perfect moment to remind you.
           </p>
         </>
+      )}
+    </div>
+  );
+}
+
+// AI enrichment for the current word: synonyms, collocations, extra examples.
+// Fetched on demand so it never blocks the review flow.
+function WordCoach({ word, def }: { word: string; def: string }) {
+  const [keyReady, setKeyReady] = useState(hasKey());
+  const [showKeyForm, setShowKeyForm] = useState(false);
+  const [out, setOut] = useState("");
+  const [busy, setBusy] = useState(false);
+  const [err, setErr] = useState("");
+
+  const run = async () => {
+    if (!keyReady) {
+      setShowKeyForm(true);
+      return;
+    }
+    setBusy(true);
+    setOut("");
+    setErr("");
+    const messages: ChatMessage[] = [
+      { role: "system", content: IELTS_SYSTEM },
+      {
+        role: "user",
+        content: `Help me remember the word "${word}" (${def}) for IELTS. In under 120 words give, as short labelled lines: 2 natural example sentences at IELTS Band 8, 3 strong synonyms with any nuance, 2 common collocations, and 1 quick memory hook. No preamble.`,
+      },
+    ];
+    try {
+      await chatStream(messages, (tok) => setOut((s) => s + tok));
+    } catch (e) {
+      setErr((e as Error).message || "Failed.");
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  return (
+    <div className="rounded-xl border bg-card/60 p-3">
+      {showKeyForm && !keyReady ? (
+        <div className="space-y-2">
+          <div className="flex items-center gap-2 text-sm font-medium">
+            <KeyRound className="size-4 text-primary" /> Connect your AI to deepen words
+          </div>
+          <ApiKeyForm
+            onSaved={() => {
+              setKeyReady(true);
+              setShowKeyForm(false);
+              void run();
+            }}
+          />
+        </div>
+      ) : !out && !busy ? (
+        <button
+          onClick={() => void run()}
+          className="flex w-full items-center justify-center gap-2 text-sm font-medium text-primary"
+        >
+          <Brain className="size-4" /> Deepen with AI — examples, synonyms, memory hook
+        </button>
+      ) : (
+        <div className="space-y-2">
+          <div className="flex items-center gap-2 text-xs font-semibold text-primary">
+            <Sparkles className="size-3.5" /> {word}
+            {busy && <Loader2 className="size-3.5 animate-spin" />}
+          </div>
+          {err ? (
+            <p className="text-sm text-destructive">{err}</p>
+          ) : (
+            <div className="whitespace-pre-wrap text-sm leading-relaxed">{out}</div>
+          )}
+        </div>
       )}
     </div>
   );
